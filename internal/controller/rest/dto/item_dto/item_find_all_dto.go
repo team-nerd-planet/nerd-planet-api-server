@@ -7,8 +7,8 @@ import (
 )
 
 type FindAllItemReq struct {
-	CompanySize *[]entity.CompanySizeType `form:"company_size" binding:"required"`
-	Tags        *[]int64                  `form:"tags" binding:"required"`
+	CompanySize *[]entity.CompanySizeType `form:"company_size"`
+	Tags        *[]int64                  `form:"tags"`
 	Page        *int                      `form:"page" binding:"required,gte=1"`
 }
 
