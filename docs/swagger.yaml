@@ -1,0 +1,95 @@
+definitions:
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes:
+    properties:
+      company_size:
+        $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_entity.CompanySizeType'
+      feed_link:
+        type: string
+      feed_name:
+        type: string
+      feed_title:
+        type: string
+      item_description:
+        type: string
+      item_id:
+        type: integer
+      item_link:
+        type: string
+      item_tags:
+        items:
+          type: integer
+        type: array
+      item_title:
+        type: string
+      item_updated:
+        type: string
+    type: object
+  github_com_team-nerd-planet_api-server_internal_entity.CompanySizeType:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - LARGE
+    - SMALL
+    - MEDIUM
+    - STARTUP
+host: localhost:5000
+info:
+  contact: {}
+  description: nerd-planet-api-server
+  title: nerd-planet-api-server
+  version: "1.0"
+paths:
+  /v1/item:
+    get:
+      consumes:
+      - application/json
+      description: items
+      parameters:
+      - collectionFormat: multi
+        description: search by company_size
+        in: query
+        items:
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          type: integer
+        name: company_size
+        type: array
+      - collectionFormat: multi
+        description: search by tag
+        in: query
+        items:
+          type: integer
+        name: tags
+        type: array
+      - description: content search by keyword
+        in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: List item
+      tags:
+      - item
+schemes:
+- http
+swagger: "2.0"

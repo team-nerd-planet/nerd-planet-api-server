@@ -1,10 +1,14 @@
 {
     "cSpell.words": [
+        "gonic",
         "gorm",
         "mapstructure",
         "primarykey",
+        "swaggerfiles",
+        "swaggo",
         "Ucase",
         "usecase",
-        "varchar"
+        "varchar",
+        "wireinject"
     ]
 }
