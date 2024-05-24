@@ -13,6 +13,7 @@ import (
 	"github.com/team-nerd-planet/api-server/infra/router"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
 	"github.com/team-nerd-planet/api-server/internal/usecase/item"
+	"github.com/team-nerd-planet/api-server/internal/usecase/tag"
 )
 
 // Injectors from wire.go:
@@ -26,9 +27,14 @@ func InitServer() (router.Router, error) {
 	if err != nil {
 		return router.Router{}, err
 	}
-	itemRepo := repository.NewMemo(databaseDatabase)
+	itemRepo := repository.NewItemRepo(databaseDatabase)
 	itemUsecase := item.NewItemUsecase(itemRepo)
 	itemController := rest.NewItemController(itemUsecase)
-	routerRouter := router.NewRouter(configConfig, itemController)
+	jobTagRepo := repository.NewJobTagRepo(databaseDatabase)
+	jobTagUsecase := tag.NewJobTagUsecase(jobTagRepo)
+	skillTagRepo := repository.NewSkillTagRepo(databaseDatabase)
+	skillTagUsecase := tag.NewSkillTagUsecase(skillTagRepo)
+	tagController := rest.NewTagController(jobTagUsecase, skillTagUsecase)
+	routerRouter := router.NewRouter(configConfig, itemController, tagController)
 	return routerRouter, nil
 }

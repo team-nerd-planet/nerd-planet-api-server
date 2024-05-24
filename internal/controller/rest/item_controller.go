@@ -20,12 +20,12 @@ func (ic ItemController) FindAllItem(req item_dto.FindAllItemReq) (dto.Paginated
 	const perPage = 100
 	data := dto.Paginated[[]item_dto.FindAllItemRes]{}
 
-	totalCount, ok := ic.itemUcase.CountViewItem(req.CompanySize, req.Tags)
+	totalCount, ok := ic.itemUcase.CountViewItem(req.Company, req.CompanySize, req.JobTags, req.SkillTags)
 	if !ok {
 		return data, false
 	}
 
-	items, ok := ic.itemUcase.FindAllViewItem(req.CompanySize, req.Tags, perPage, *req.Page)
+	items, ok := ic.itemUcase.FindAllViewItem(req.Company, req.CompanySize, req.JobTags, req.SkillTags, perPage, *req.Page)
 	if !ok {
 		return data, false
 	}

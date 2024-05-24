@@ -3,6 +3,7 @@
         "gonic",
         "gorm",
         "mapstructure",
+        "minlength",
         "primarykey",
         "swaggerfiles",
         "swaggo",

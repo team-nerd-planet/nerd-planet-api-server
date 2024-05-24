@@ -5,4 +5,4 @@ import (
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
 )
 
-var ControllerSet = wire.NewSet(rest.NewItemController)
+var ControllerSet = wire.NewSet(rest.NewItemController, rest.NewTagController)

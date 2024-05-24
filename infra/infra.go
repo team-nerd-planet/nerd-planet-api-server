@@ -12,5 +12,7 @@ var InfraSet = wire.NewSet(
 	config.NewConfig,
 	router.NewRouter,
 	database.NewDatabase,
-	repository.NewMemo,
+	repository.NewItemRepo,
+	repository.NewJobTagRepo,
+	repository.NewSkillTagRepo,
 )

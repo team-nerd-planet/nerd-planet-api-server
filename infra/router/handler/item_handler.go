@@ -1,11 +1,10 @@
 package handler
 
 import (
-	"log/slog"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/team-nerd-planet/api-server/infra/router/util"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest/dto/item_dto"
 	_ "github.com/team-nerd-planet/api-server/internal/entity"
@@ -14,64 +13,34 @@ import (
 // ListItems
 //
 // @Summary			List item
-// @Description		items
+// @Description		list items
 // @Tags			item
 // @Schemes			http
 // @Accept			json
 // @Produce			json
-// @Param			company_size	query	[]entity.CompanySizeType	false	"search by company_size"		collectionFormat(multi)
-// @Param			tags			query	[]int64						false	"search by tag"					collectionFormat(multi)
-// @Param			page			query	int							true	"content search by keyword"		minimum(1)
+// @Param			company			query	string						false	"회사 이름 검색 키워드"
+// @Param			company_size	query	[]entity.CompanySizeType	false	"회사 규모 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)"  collectionFormat(multi)
+// @Param			job_tags		query	[]int64						false	"관련 직무 DB ID 배열"											   collectionFormat(multi)
+// @Param			skill_tags		query	[]int64						false	"관련 스킬 DB ID 배열"											   collectionFormat(multi)
+// @Param			page			query	int							true	"페이지"
 // @Success			200 {object} item_dto.FindAllItemRes
-// @Failure			400
-// @Failure			404
-// @Failure			500
+// @Failure			400 {object} util.HTTPError
+// @Failure			404 {object} util.HTTPError
+// @Failure			500 {object} util.HTTPError
 // @Router			/v1/item [get]
 func ListItems(c *gin.Context, ctrl rest.ItemController) {
-	req, ok := validateQuery[item_dto.FindAllItemReq](c)
-	if !ok {
+	req, err := util.ValidateQuery[item_dto.FindAllItemReq](c)
+	if err != nil {
 		c.Status(http.StatusBadRequest)
+		util.NewError(c, http.StatusBadRequest, err)
 		return
 	}
 
 	res, ok := ctrl.FindAllItem(*req)
 	if !ok {
-		c.Status(http.StatusInternalServerError)
+		util.NewError(c, http.StatusInternalServerError)
 		return
 	}
 
 	c.JSON(http.StatusOK, res)
-}
-
-func validateBody[T any](c *gin.Context) (*T, bool) {
-	var input T
-
-	if err := c.ShouldBind(&input); err != nil {
-		slog.Error(err.Error())
-		return nil, false
-	}
-
-	return &input, true
-}
-
-func validateQuery[T any](c *gin.Context) (*T, bool) {
-	var input T
-
-	if err := c.ShouldBindQuery(&input); err != nil {
-		slog.Error(err.Error())
-		return nil, false
-	}
-
-	return &input, true
-}
-
-func validateInt64Param(c *gin.Context, key string) (*int64, bool) {
-	param := c.Param(key)
-	id, err := strconv.ParseInt(param, 10, 64)
-	if err != nil {
-		slog.Error(err.Error())
-		return nil, false
-	}
-
-	return &id, true
 }

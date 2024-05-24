@@ -1,27 +1,70 @@
 definitions:
+  github_com_team-nerd-planet_api-server_infra_router_util.HTTPError:
+    properties:
+      code:
+        type: integer
+      description:
+        type: string
+      message:
+        type: string
+    type: object
   github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes:
     properties:
       company_size:
-        $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_entity.CompanySizeType'
+        allOf:
+        - $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_entity.CompanySizeType'
+        description: 회사 규모
       feed_link:
+        description: 회사 URL
         type: string
       feed_name:
+        description: 회사 이름
         type: string
       feed_title:
+        description: 회사 Feed 제목
         type: string
       item_description:
+        description: 글 설명
         type: string
       item_id:
+        description: 글 DB ID
         type: integer
       item_link:
+        description: 글 URL
         type: string
-      item_tags:
+      item_published:
+        description: 개시 시간
+        type: string
+      item_title:
+        description: 글 제목
+        type: string
+      job_tags_id_arr:
+        description: 관련 직무 DB ID 배열
         items:
           type: integer
         type: array
-      item_title:
+      skill_tags_id_arr:
+        description: 관련 스킬 DB ID 배열
+        items:
+          type: integer
+        type: array
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_tag_dto.FindAllJobTagRes:
+    properties:
+      id:
+        description: 직무 DB ID
+        type: integer
+      name:
+        description: 직무 이름
         type: string
-      item_updated:
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_tag_dto.FindAllSkillTagRes:
+    properties:
+      id:
+        description: 스킬 DB ID
+        type: integer
+      name:
+        description: 스킬 이름
         type: string
     type: object
   github_com_team-nerd-planet_api-server_internal_entity.CompanySizeType:
@@ -30,12 +73,20 @@ definitions:
     - 1
     - 2
     - 3
+    - 4
     type: integer
+    x-enum-comments:
+      FOREIGN: 외국계
+      LARGE: 대기업
+      MEDIUM: 중견기업
+      SMALL: 중소기업
+      STARTUP: 스타트업
     x-enum-varnames:
-    - LARGE
+    - STARTUP
     - SMALL
     - MEDIUM
-    - STARTUP
+    - LARGE
+    - FOREIGN
 host: localhost:5000
 info:
   contact: {}
@@ -47,10 +98,14 @@ paths:
     get:
       consumes:
       - application/json
-      description: items
+      description: list items
       parameters:
+      - description: 회사 이름 검색 키워드
+        in: query
+        name: company
+        type: string
       - collectionFormat: multi
-        description: search by company_size
+        description: 회사 규모 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)
         in: query
         items:
           enum:
@@ -58,19 +113,26 @@ paths:
           - 1
           - 2
           - 3
+          - 4
           type: integer
         name: company_size
         type: array
       - collectionFormat: multi
-        description: search by tag
+        description: 관련 직무 DB ID 배열
         in: query
         items:
           type: integer
-        name: tags
+        name: job_tags
         type: array
-      - description: content search by keyword
+      - collectionFormat: multi
+        description: 관련 스킬 DB ID 배열
         in: query
-        minimum: 1
+        items:
+          type: integer
+        name: skill_tags
+        type: array
+      - description: 페이지
+        in: query
         name: page
         required: true
         type: integer
@@ -83,13 +145,77 @@ paths:
             $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
       summary: List item
       tags:
       - item
+  /v1/tag/job:
+    get:
+      consumes:
+      - application/json
+      description: list job tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_tag_dto.FindAllJobTagRes'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+      summary: List Job Tag
+      tags:
+      - tag
+  /v1/tag/skill:
+    get:
+      consumes:
+      - application/json
+      description: list skill tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_tag_dto.FindAllSkillTagRes'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+      summary: List Skill Tag
+      tags:
+      - tag
 schemes:
 - http
 swagger: "2.0"

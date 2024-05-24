@@ -13,31 +13,41 @@ type ItemRepo struct {
 	db *database.Database
 }
 
-func NewMemo(db *database.Database) entity.ItemRepo {
+func NewItemRepo(db *database.Database) entity.ItemRepo {
 	return &ItemRepo{
 		db: db,
 	}
 }
 
 // Count implements entity.ItemRepo.
-func (clr *ItemRepo) CountView(feedCompanySizeType *[]entity.CompanySizeType, itemTagIDArr *[]int64) (int64, error) {
+func (clr *ItemRepo) CountView(company *string, companySizes *[]entity.CompanySizeType, jobTags, skillTags *[]int64) (int64, error) {
 	var (
 		count int64
 		where = make([]string, 0)
 		param = make([]interface{}, 0)
 	)
 
-	if feedCompanySizeType != nil {
+	if company != nil {
+		where = append(where, "feed_name LIKE ?")
+		param = append(param, fmt.Sprintf("%%%s%%", *company))
+	}
+
+	if companySizes != nil {
 		where = append(where, "company_size IN ?")
-		param = append(param, *feedCompanySizeType)
+		param = append(param, *companySizes)
 	}
 
-	if itemTagIDArr != nil {
-		where = append(where, "tag_id_arr @> ?") // `@>` = Does left array contain right array?
-		param = append(param, getArrToString(*itemTagIDArr))
+	if jobTags != nil {
+		where = append(where, "job_tags_id_arr && ?") // `&&`: overlap (have elements in common)
+		param = append(param, getArrToString(*jobTags))
 	}
 
-	err := clr.db.Model(&entity.ViewItem{}).
+	if skillTags != nil {
+		where = append(where, "skill_tags_id_arr && ?") // `&&`: overlap (have elements in common)
+		param = append(param, getArrToString(*skillTags))
+	}
+
+	err := clr.db.Model(&entity.ItemView{}).
 		Where(strings.Join(where, " AND "), param...).
 		Count(&count).Error
 	if err != nil {
@@ -48,21 +58,31 @@ func (clr *ItemRepo) CountView(feedCompanySizeType *[]entity.CompanySizeType, it
 }
 
 // FindAll implements entity.ItemRepo.
-func (clr *ItemRepo) FindAllView(feedCompanySizeType *[]entity.CompanySizeType, itemTagIDArr *[]int64, perPage int, page int) ([]entity.ViewItem, error) {
+func (clr *ItemRepo) FindAllView(company *string, companySizes *[]entity.CompanySizeType, jobTags, skillTags *[]int64, perPage int, page int) ([]entity.ItemView, error) {
 	var (
-		items []entity.ViewItem
+		items []entity.ItemView
 		where = make([]string, 0)
 		param = make([]interface{}, 0)
 	)
 
-	if feedCompanySizeType != nil {
-		where = append(where, "company_size IN ?")
-		param = append(param, *feedCompanySizeType)
+	if company != nil {
+		where = append(where, "feed_name LIKE ?")
+		param = append(param, fmt.Sprintf("%%%s%%", *company))
 	}
 
-	if itemTagIDArr != nil {
-		where = append(where, "tag_id_arr @> ?") // `@>` = Does left array contain right array?
-		param = append(param, getArrToString(*itemTagIDArr))
+	if companySizes != nil {
+		where = append(where, "company_size IN ?")
+		param = append(param, *companySizes)
+	}
+
+	if jobTags != nil {
+		where = append(where, "job_tags_id_arr && ?") // `&&`: overlap (have elements in common)
+		param = append(param, getArrToString(*jobTags))
+	}
+
+	if skillTags != nil {
+		where = append(where, "skill_tags_id_arr && ?") // `&&`: overlap (have elements in common)
+		param = append(param, getArrToString(*skillTags))
 	}
 
 	err := clr.db.

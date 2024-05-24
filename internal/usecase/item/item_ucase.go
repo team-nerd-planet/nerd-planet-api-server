@@ -16,8 +16,8 @@ func NewItemUsecase(itemRepo entity.ItemRepo) ItemUsecase {
 	}
 }
 
-func (iu ItemUsecase) CountViewItem(companySizeArr *[]entity.CompanySizeType, itemTagIDArr *[]int64) (*int64, bool) {
-	count, err := iu.itemRepo.CountView(companySizeArr, itemTagIDArr)
+func (iu ItemUsecase) CountViewItem(company *string, companySizes *[]entity.CompanySizeType, jobTags, skillTags *[]int64) (*int64, bool) {
+	count, err := iu.itemRepo.CountView(company, companySizes, jobTags, skillTags)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, false
@@ -26,8 +26,8 @@ func (iu ItemUsecase) CountViewItem(companySizeArr *[]entity.CompanySizeType, it
 	return &count, true
 }
 
-func (mu ItemUsecase) FindAllViewItem(companySizeArr *[]entity.CompanySizeType, itemTagIDArr *[]int64, perPage, page int) (*[]entity.ViewItem, bool) {
-	viewItems, err := mu.itemRepo.FindAllView(companySizeArr, itemTagIDArr, perPage, page)
+func (mu ItemUsecase) FindAllViewItem(company *string, companySizes *[]entity.CompanySizeType, jobTags, skillTags *[]int64, perPage int, page int) (*[]entity.ItemView, bool) {
+	viewItems, err := mu.itemRepo.FindAllView(company, companySizes, jobTags, skillTags, perPage, page)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, false
