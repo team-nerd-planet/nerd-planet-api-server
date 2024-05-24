@@ -50,4 +50,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: kubectl set image deploy/api-server api-server=${{ secrets.DOCKERHUB_USERNAME }}/api-server:${{ steps.vars.outputs.short_sha }}
+          script: kubectl -n ${{ secrets.NAMESPACE }} set image deploy/api-server api-server=${{ secrets.DOCKERHUB_USERNAME }}/api-server:${{ steps.vars.outputs.short_sha }}
