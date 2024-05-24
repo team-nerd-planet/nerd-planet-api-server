@@ -23,9 +23,7 @@ jobs:
           go-version-file: './go.mod'
 
       - name: Build
-        working-directory: ./consumer
         run: go build -v -o ./server ./cmd/server
 
       - name: Test
-        working-directory: ./consumer
         run: go test -v ./cmd/server
