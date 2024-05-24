@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: './consumer/go.mod'
+
+      - name: Build
+        working-directory: ./consumer
+        run: go build -v -o ./server ./cmd/server
+
+      - name: Test
+        working-directory: ./consumer
+        run: go test -v ./cmd/server
