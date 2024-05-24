@@ -12,6 +12,7 @@ type Config struct {
 	App      App      `mapstructure:"APP"`
 	Rest     Rest     `mapstructure:"REST"`
 	Database Database `mapstructure:"DATABASE"`
+	Swagger  Swagger  `mapstructure:"SWAGGER"`
 }
 
 type App struct {
@@ -30,6 +31,11 @@ type Database struct {
 	UserName string `mapstructure:"USER_NAME"`
 	Password string `mapstructure:"PASSWORD"`
 	DbName   string `mapstructure:"DB_NAME"`
+}
+
+type Swagger struct {
+	Host     string `mapstructure:"HOST"`
+	BasePath string `mapstructure:"BASE_PATH"`
 }
 
 func NewConfig() (*Config, error) {

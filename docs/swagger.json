@@ -9,7 +9,6 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:5000",
     "paths": {
         "/v1/item": {
             "get": {
@@ -245,6 +244,10 @@
                 },
                 "item_published": {
                     "description": "개시 시간",
+                    "type": "string"
+                },
+                "item_thumbnail": {
+                    "description": "글 썸네일",
                     "type": "string"
                 },
                 "item_title": {

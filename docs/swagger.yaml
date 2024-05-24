@@ -35,6 +35,9 @@ definitions:
       item_published:
         description: 개시 시간
         type: string
+      item_thumbnail:
+        description: 글 썸네일
+        type: string
       item_title:
         description: 글 제목
         type: string
@@ -87,7 +90,6 @@ definitions:
     - MEDIUM
     - LARGE
     - FOREIGN
-host: localhost:5000
 info:
   contact: {}
   description: nerd-planet-api-server

@@ -11,6 +11,7 @@ type Item struct {
 	Title       string     `gorm:"column:title;type:varchar;not null"`
 	Description string     `gorm:"column:description;type:varchar;not null"`
 	Link        string     `gorm:"column:link;type:varchar;not null"`
+	Thumbnail   *string    `gorm:"column:thumbnail;type:varchar"`
 	Published   time.Time  `gorm:"column:published;type:timestamp;not null"`
 	GUID        string     `gorm:"column:guid;type:varchar;not null"`
 	FeedID      uint       `gorm:"column:feed_id;type:int8;not null"`
@@ -23,6 +24,7 @@ type ItemView struct {
 	ItemTitle       string          `gorm:"column:item_title;type:varchar"`
 	ItemDescription string          `gorm:"column:item_description;type:varchar"`
 	ItemLink        string          `gorm:"column:item_link;type:varchar"`
+	ItemThumbnail   *string         `gorm:"column:item_thumbnail;type:varchar"`
 	ItemPublished   time.Time       `gorm:"column:item_published;type:timestamp"`
 	FeedName        string          `gorm:"column:feed_name;type:varchar"`
 	FeedTitle       string          `gorm:"column:feed_title;type:varchar"`

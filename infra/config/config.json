@@ -13,5 +13,9 @@
     "PASSWORD": "planet1!",
     "DB_NAME": "nerd_planet",
     "LOG_LEVEL": 4
+  },
+  "SWAGGER": {
+    "HOST": "localhost",
+    "BASE_PATH": "/"
   }
 }

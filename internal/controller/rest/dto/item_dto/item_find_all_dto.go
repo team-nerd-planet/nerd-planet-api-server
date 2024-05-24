@@ -19,6 +19,7 @@ type FindAllItemRes struct {
 	ItemTitle       string                 `json:"item_title"`        // 글 제목
 	ItemDescription string                 `json:"item_description"`  // 글 설명
 	ItemLink        string                 `json:"item_link"`         // 글 URL
+	ItemThumbnail   *string                `json:"item_thumbnail"`    // 글 썸네일
 	ItemPublished   time.Time              `json:"item_published"`    // 개시 시간
 	FeedName        string                 `json:"feed_name"`         // 회사 이름
 	FeedTitle       string                 `json:"feed_title"`        // 회사 Feed 제목
@@ -28,18 +29,19 @@ type FindAllItemRes struct {
 	SkillTagIDArr   []int64                `json:"skill_tags_id_arr"` // 관련 스킬 DB ID 배열
 }
 
-func NewFindAllItemRes(viewItem entity.ItemView) FindAllItemRes {
+func NewFindAllItemRes(itemView entity.ItemView) FindAllItemRes {
 	return FindAllItemRes{
-		ItemID:          viewItem.ItemID,
-		ItemTitle:       viewItem.ItemTitle,
-		ItemDescription: viewItem.ItemDescription,
-		ItemLink:        viewItem.ItemLink,
-		ItemPublished:   viewItem.ItemPublished,
-		FeedName:        viewItem.FeedName,
-		FeedTitle:       viewItem.FeedTitle,
-		FeedLink:        viewItem.FeedLink,
-		CompanySize:     viewItem.CompanySize,
-		JobTagIDArr:     viewItem.JobTagIDArr,
-		SkillTagIDArr:   viewItem.SkillTagIDArr,
+		ItemID:          itemView.ItemID,
+		ItemTitle:       itemView.ItemTitle,
+		ItemDescription: itemView.ItemDescription,
+		ItemLink:        itemView.ItemLink,
+		ItemThumbnail:   itemView.ItemThumbnail,
+		ItemPublished:   itemView.ItemPublished,
+		FeedName:        itemView.FeedName,
+		FeedTitle:       itemView.FeedTitle,
+		FeedLink:        itemView.FeedLink,
+		CompanySize:     itemView.CompanySize,
+		JobTagIDArr:     itemView.JobTagIDArr,
+		SkillTagIDArr:   itemView.SkillTagIDArr,
 	}
 }

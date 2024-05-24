@@ -251,6 +251,10 @@ const docTemplate = `{
                     "description": "개시 시간",
                     "type": "string"
                 },
+                "item_thumbnail": {
+                    "description": "글 썸네일",
+                    "type": "string"
+                },
                 "item_title": {
                     "description": "글 제목",
                     "type": "string"
@@ -327,7 +331,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:5000",
+	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{"http"},
 	Title:            "nerd-planet-api-server",

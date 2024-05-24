@@ -31,7 +31,8 @@ func NewRouter(conf *config.Config, itemCtrl rest.ItemController, tabCtrl rest.T
 	r.Use(middleware.CorsHandler())
 	s := persistence.NewInMemoryStore(time.Hour)
 
-	docs.SwaggerInfo.BasePath = "/"
+	docs.SwaggerInfo.Host = conf.Swagger.Host
+	docs.SwaggerInfo.BasePath = conf.Swagger.BasePath
 	v1 := r.Group("/v1")
 	{
 		v1.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
