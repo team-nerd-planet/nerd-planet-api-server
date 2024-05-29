@@ -124,6 +124,8 @@ func sendSubscribeMail(host string, port int, userName, password, email, token s
 		Token: token,
 	}
 
+	slog.Info("sendSubscribeMail", "host", host, "port", port, "userName", userName, "password", password, "email", email, "token", token)
+
 	_, b, _, _ := runtime.Caller(0)
 	configDirPath := path.Join(path.Dir(b))
 	t, err := template.ParseFiles(fmt.Sprintf("%s/template/subscription.html", configDirPath))
