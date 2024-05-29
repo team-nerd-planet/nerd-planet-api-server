@@ -60,6 +60,7 @@ func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.S
 	}
 
 	slog.Info("Generate Token", "str", tokenStr)
+	slog.Info("Config", "su.conf.Smtp", su.conf.Smtp)
 
 	if err := sendSubscribeMail(su.conf.Smtp.Host, su.conf.Smtp.Port, su.conf.Smtp.UserName, su.conf.Smtp.Password, subscription.Email, tokenStr); err != nil {
 		slog.Error(err.Error(), "error", err)
