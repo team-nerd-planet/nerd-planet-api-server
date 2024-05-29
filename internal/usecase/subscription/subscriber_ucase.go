@@ -32,7 +32,6 @@ func NewSubscriptionUsecase(
 }
 
 func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.Subscription, bool) {
-	slog.Info("SubscriptionUsecase_Apply", "subscription", subscription)
 	id, err := su.subscriptionRepo.ExistEmail(subscription.Email)
 	if err != nil {
 		slog.Error(err.Error(), "error", err)
@@ -40,8 +39,6 @@ func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.S
 	}
 
 	token := emailToken{Subscription: subscription}
-	slog.Info("Init Token", "token", token)
-
 	token.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(1 * time.Hour))
 
 	if id == nil {
@@ -51,18 +48,13 @@ func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.S
 		token.Subscription.ID = uint(*id)
 	}
 
-	slog.Info("Token", "token", token)
-
 	tokenStr, err := generateEmailToken(token, su.conf.Jwt.SecretKey)
 	if err != nil {
 		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 
-	slog.Info("Generate Token", "str", tokenStr)
-	slog.Info("Config", "su.conf.Smtp", su.conf.Smtp)
-
-	if err := sendSubscribeMail(su.conf.Smtp.Host, su.conf.Smtp.Port, su.conf.Smtp.UserName, su.conf.Smtp.Password, subscription.Email, tokenStr); err != nil {
+	if err := sendSubscribeMail(su.conf.Smtp, su.conf.Swagger, subscription.Email, tokenStr); err != nil {
 		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
@@ -118,14 +110,14 @@ func (su SubscriptionUsecase) Unsubscribe(email string) (*entity.Subscription, b
 	return nil, false
 }
 
-func sendSubscribeMail(host string, port int, userName, password, email, token string) error {
+func sendSubscribeMail(smtpConf config.Smtp, serverConf config.Swagger, email, token string) error {
 	data := struct {
+		Host  string
 		Token string
 	}{
+		Host:  serverConf.Host,
 		Token: token,
 	}
-
-	slog.Info("sendSubscribeMail", "host", host, "port", port, "userName", userName, "password", password, "email", email, "token", token)
 
 	_, b, _, _ := runtime.Caller(0)
 	configDirPath := path.Join(path.Dir(b))
@@ -141,13 +133,13 @@ func sendSubscribeMail(host string, port int, userName, password, email, token s
 		return err
 	}
 
-	auth := smtp.PlainAuth("", userName, password, host)
-	from := userName
+	auth := smtp.PlainAuth("", smtpConf.UserName, smtpConf.Password, smtpConf.Host)
+	from := smtpConf.UserName
 	to := []string{email}
 	subject := "Subject: Nerd Planet 메일 인증\n"
 	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 	msg := []byte(subject + mime + body.String())
-	err = smtp.SendMail(fmt.Sprintf("%s:%d", host, port), auth, from, to, msg)
+	err = smtp.SendMail(fmt.Sprintf("%s:%d", smtpConf.Host, smtpConf.Port), auth, from, to, msg)
 	if err != nil {
 		return err
 	}

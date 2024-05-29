@@ -74,7 +74,5 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 
-	slog.Info("load env", "conf", conf)
-
 	return &conf, nil
 }

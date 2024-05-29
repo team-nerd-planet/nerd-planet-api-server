@@ -1,8 +1,6 @@
 package rest
 
 import (
-	"log/slog"
-
 	"github.com/team-nerd-planet/api-server/internal/controller/rest/dto/subscription_dto"
 	"github.com/team-nerd-planet/api-server/internal/usecase/subscription"
 )
@@ -18,14 +16,10 @@ func NewSubscriptionController(subscriptionUcase subscription.SubscriptionUsecas
 }
 
 func (sc SubscriptionController) Apply(req subscription_dto.ApplyReq) (*subscription_dto.ApplyRes, bool) {
-	slog.Info("SubscriptionController_Apply", "req", req)
-
 	subscription, ok := sc.subscriptionUcase.Apply(req.NewSubscription())
 	if !ok {
 		return nil, false
 	}
-
-	slog.Info("Result", "subscription", subscription)
 
 	result := false
 	if subscription != nil {
