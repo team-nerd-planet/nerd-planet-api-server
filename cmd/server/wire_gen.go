@@ -13,6 +13,7 @@ import (
 	"github.com/team-nerd-planet/api-server/infra/router"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
 	"github.com/team-nerd-planet/api-server/internal/usecase/item"
+	"github.com/team-nerd-planet/api-server/internal/usecase/subscription"
 	"github.com/team-nerd-planet/api-server/internal/usecase/tag"
 )
 
@@ -35,6 +36,9 @@ func InitServer() (router.Router, error) {
 	skillTagRepo := repository.NewSkillTagRepo(databaseDatabase)
 	skillTagUsecase := tag.NewSkillTagUsecase(skillTagRepo)
 	tagController := rest.NewTagController(jobTagUsecase, skillTagUsecase)
-	routerRouter := router.NewRouter(configConfig, itemController, tagController)
+	subscriptionRepo := repository.NewSubscriptionRepo(databaseDatabase)
+	subscriptionUsecase := subscription.NewSubscriptionUsecase(subscriptionRepo, configConfig)
+	subscriptionController := rest.NewSubscriptionController(subscriptionUsecase)
+	routerRouter := router.NewRouter(configConfig, itemController, tagController, subscriptionController)
 	return routerRouter, nil
 }

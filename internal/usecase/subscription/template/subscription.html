@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nerd Planet Auth Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .content {
+            padding: 20px 0;
+        }
+
+        .content a {
+            font-weight: bold;
+            font-style: unset;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="content">
+            이메일 인증을 하려면 <a href="http://localhost:5000/v1/subscription/approve?token={{.Token}}">여기</a>를 눌러주세요.
+        </div>
+    </div>
+</body>
+
+</html>

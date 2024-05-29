@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/team-nerd-planet/api-server/infra/router/util"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
+	_ "github.com/team-nerd-planet/api-server/internal/controller/rest/dto"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest/dto/item_dto"
 	_ "github.com/team-nerd-planet/api-server/internal/entity"
 )
@@ -23,7 +24,7 @@ import (
 // @Param			job_tags		query	[]int64						false	"관련 직무 DB ID 배열"											   collectionFormat(multi)
 // @Param			skill_tags		query	[]int64						false	"관련 스킬 DB ID 배열"											   collectionFormat(multi)
 // @Param			page			query	int							true	"페이지"
-// @Success			200 {object} item_dto.FindAllItemRes
+// @Success			200 {object} dto.Paginated[[]item_dto.FindAllItemRes]
 // @Failure			400 {object} util.HTTPError
 // @Failure			404 {object} util.HTTPError
 // @Failure			500 {object} util.HTTPError
@@ -31,7 +32,6 @@ import (
 func ListItems(c *gin.Context, ctrl rest.ItemController) {
 	req, err := util.ValidateQuery[item_dto.FindAllItemReq](c)
 	if err != nil {
-		c.Status(http.StatusBadRequest)
 		util.NewError(c, http.StatusBadRequest, err)
 		return
 	}

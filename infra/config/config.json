@@ -15,7 +15,7 @@
     "LOG_LEVEL": 4
   },
   "SWAGGER": {
-    "HOST": "localhost",
+    "HOST": "localhost:5000",
     "BASE_PATH": "/"
   }
 }

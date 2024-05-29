@@ -9,11 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	docs "github.com/team-nerd-planet/api-server/docs"
 	"github.com/team-nerd-planet/api-server/infra/config"
 	"github.com/team-nerd-planet/api-server/infra/router/handler"
 	"github.com/team-nerd-planet/api-server/infra/router/middleware"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
+	docs "github.com/team-nerd-planet/api-server/third_party/docs"
 )
 
 type Router struct {
@@ -22,7 +22,7 @@ type Router struct {
 	conf   *config.Config
 }
 
-func NewRouter(conf *config.Config, itemCtrl rest.ItemController, tabCtrl rest.TagController) Router {
+func NewRouter(conf *config.Config, itemCtrl rest.ItemController, tagCtrl rest.TagController, subscriptionCtrl rest.SubscriptionController) Router {
 	if conf.Rest.Mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -44,8 +44,14 @@ func NewRouter(conf *config.Config, itemCtrl rest.ItemController, tabCtrl rest.T
 
 		tag := v1.Group("/tag")
 		{
-			tag.GET("/job", cache.CachePage(s, time.Hour, func(c *gin.Context) { handler.ListJobTags(c, tabCtrl) }))
-			tag.GET("/skill", cache.CachePage(s, time.Hour, func(c *gin.Context) { handler.ListSkillTags(c, tabCtrl) }))
+			tag.GET("/job", cache.CachePage(s, time.Hour, func(c *gin.Context) { handler.ListJobTags(c, tagCtrl) }))
+			tag.GET("/skill", cache.CachePage(s, time.Hour, func(c *gin.Context) { handler.ListSkillTags(c, tagCtrl) }))
+		}
+
+		subscription := v1.Group("/subscription")
+		{
+			subscription.POST("/apply", func(c *gin.Context) { handler.Apply(c, subscriptionCtrl) })
+			subscription.GET("/approve", func(c *gin.Context) { handler.Approve(c, subscriptionCtrl) })
 		}
 	}
 

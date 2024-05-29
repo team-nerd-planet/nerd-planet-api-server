@@ -84,7 +84,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes"
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto.Paginated-array_github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto_FindAllItemRes"
                         }
                     },
                     "400": {
@@ -95,6 +95,52 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/subscription/apply": {
+            "post": {
+                "description": "apply for subscription",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscription"
+                ],
+                "summary": "Apply subscription",
+                "parameters": [
+                    {
+                        "description": "contents for applying for subscription.",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApplyReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApplyRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
                         }
@@ -212,6 +258,29 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto.Paginated-array_github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto_FindAllItemRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
+                },
+                "total_page": {
+                    "type": "integer"
+                }
+            }
+        },
         "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes": {
             "type": "object",
             "properties": {
@@ -272,6 +341,67 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApplyReq": {
+            "type": "object",
+            "required": [
+                "email",
+                "preferred_companySize_arr",
+                "preferred_company_arr",
+                "preferred_job_arr",
+                "preferred_skill_arr"
+            ],
+            "properties": {
+                "division": {
+                    "description": "소속",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "이메일",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "이름",
+                    "type": "string"
+                },
+                "preferred_companySize_arr": {
+                    "description": "회사 규모 배열 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_entity.CompanySizeType"
+                    }
+                },
+                "preferred_company_arr": {
+                    "description": "회사 DB ID 배열",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "preferred_job_arr": {
+                    "description": "직무 DB ID 배열",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "preferred_skill_arr": {
+                    "description": "스킬 DB ID 배열",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApplyRes": {
+            "type": "object",
+            "properties": {
+                "ok": {
+                    "description": "구독 신청 메일 전송 결과",
+                    "type": "boolean"
                 }
             }
         },

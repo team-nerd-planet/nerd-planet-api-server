@@ -5,11 +5,11 @@ import "time"
 type CompanySizeType int
 
 const (
-	STARTUP CompanySizeType = iota //스타트업
-	SMALL                          //중소기업
-	MEDIUM                         //중견기업
-	LARGE                          //대기업
-	FOREIGN                        //외국계
+	STARTUP CompanySizeType = iota // 스타트업
+	SMALL                          // 중소기업
+	MEDIUM                         // 중견기업
+	LARGE                          // 대기업
+	FOREIGN                        // 외국계
 )
 
 type Feed struct {

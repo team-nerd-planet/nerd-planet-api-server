@@ -15,4 +15,5 @@ var InfraSet = wire.NewSet(
 	repository.NewItemRepo,
 	repository.NewJobTagRepo,
 	repository.NewSkillTagRepo,
+	repository.NewSubscriptionRepo,
 )

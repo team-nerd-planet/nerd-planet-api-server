@@ -8,6 +8,21 @@ definitions:
       message:
         type: string
     type: object
+  ? github_com_team-nerd-planet_api-server_internal_controller_rest_dto.Paginated-array_github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto_FindAllItemRes
+  : properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes'
+        type: array
+      page:
+        type: integer
+      per_page:
+        type: integer
+      total_count:
+        type: integer
+      total_page:
+        type: integer
+    type: object
   github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes:
     properties:
       company_size:
@@ -51,6 +66,50 @@ definitions:
         items:
           type: integer
         type: array
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApplyReq:
+    properties:
+      division:
+        description: 소속
+        type: string
+      email:
+        description: 이메일
+        type: string
+      name:
+        description: 이름
+        type: string
+      preferred_company_arr:
+        description: 회사 DB ID 배열
+        items:
+          type: integer
+        type: array
+      preferred_companySize_arr:
+        description: 회사 규모 배열 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)
+        items:
+          $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_entity.CompanySizeType'
+        type: array
+      preferred_job_arr:
+        description: 직무 DB ID 배열
+        items:
+          type: integer
+        type: array
+      preferred_skill_arr:
+        description: 스킬 DB ID 배열
+        items:
+          type: integer
+        type: array
+    required:
+    - email
+    - preferred_companySize_arr
+    - preferred_company_arr
+    - preferred_job_arr
+    - preferred_skill_arr
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApplyRes:
+    properties:
+      ok:
+        description: 구독 신청 메일 전송 결과
+        type: boolean
     type: object
   github_com_team-nerd-planet_api-server_internal_controller_rest_dto_tag_dto.FindAllJobTagRes:
     properties:
@@ -144,7 +203,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes'
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto.Paginated-array_github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto_FindAllItemRes'
         "400":
           description: Bad Request
           schema:
@@ -160,6 +219,36 @@ paths:
       summary: List item
       tags:
       - item
+  /v1/subscription/apply:
+    post:
+      consumes:
+      - application/json
+      description: apply for subscription
+      parameters:
+      - description: contents for applying for subscription.
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApplyReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApplyRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+      summary: Apply subscription
+      tags:
+      - subscription
   /v1/tag/job:
     get:
       consumes:

@@ -6,6 +6,7 @@ require (
 	github.com/gin-contrib/cache v1.3.0
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/wire v0.6.0
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.18.2

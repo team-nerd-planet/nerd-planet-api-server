@@ -13,6 +13,8 @@ type Config struct {
 	Rest     Rest     `mapstructure:"REST"`
 	Database Database `mapstructure:"DATABASE"`
 	Swagger  Swagger  `mapstructure:"SWAGGER"`
+	Jwt      Jwt      `mapstructure:"JWT"`
+	Smtp     Smtp     `mapstructure:"SMTP"`
 }
 
 type App struct {
@@ -36,6 +38,17 @@ type Database struct {
 type Swagger struct {
 	Host     string `mapstructure:"HOST"`
 	BasePath string `mapstructure:"BASE_PATH"`
+}
+
+type Jwt struct {
+	SecretKey string `mapstructure:"SECRET_KEY"`
+}
+
+type Smtp struct {
+	Host     string `mapstructure:"HOST"`
+	Port     int    `mapstructure:"PORT"`
+	UserName string `mapstructure:"USER_NAME"`
+	Password string `mapstructure:"PASSWORD"`
 }
 
 func NewConfig() (*Config, error) {
