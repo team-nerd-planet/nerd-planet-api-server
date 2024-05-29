@@ -1,7 +1,7 @@
 package config
 
 import (
-	"log/slog"
+	"fmt"
 	"path"
 	"runtime"
 
@@ -62,7 +62,7 @@ func NewConfig() (*Config, error) {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		slog.Error("Read config file.", "err", err)
+		fmt.Println("Read config file.", "err", err)
 		return nil, err
 	}
 
@@ -70,7 +70,7 @@ func NewConfig() (*Config, error) {
 
 	err = viper.Unmarshal(&conf)
 	if err != nil {
-		slog.Error("Unmarshal config file.", "err", err)
+		fmt.Println("Unmarshal config file.", "err", err)
 		return nil, err
 	}
 

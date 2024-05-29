@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
-	"log/slog"
 	"net/smtp"
 	"path"
 	"runtime"
@@ -34,7 +33,7 @@ func NewSubscriptionUsecase(
 func (su SubscriptionUsecase) ApplySubscription(subscription entity.Subscription) (*entity.Subscription, bool) {
 	id, err := su.subscriptionRepo.ExistEmail(subscription.Email)
 	if err != nil {
-		slog.Error(err.Error())
+		fmt.Println(err.Error())
 		return nil, false
 	}
 
@@ -50,7 +49,7 @@ func (su SubscriptionUsecase) ApplySubscription(subscription entity.Subscription
 
 	tokenStr, err := generateEmailToken(token, su.conf.Jwt.SecretKey)
 	if err != nil {
-		slog.Error(err.Error())
+		fmt.Println(err.Error())
 		return nil, false
 	}
 
@@ -78,7 +77,7 @@ func (su SubscriptionUsecase) Subscribe(token string) (*entity.Subscription, boo
 
 	emailToken, err = verifyEmailToken(token, su.conf.Jwt.SecretKey)
 	if err != nil {
-		slog.Error(err.Error())
+		fmt.Println(err.Error())
 		return nil, false
 	}
 
@@ -94,7 +93,7 @@ func (su SubscriptionUsecase) Subscribe(token string) (*entity.Subscription, boo
 	}
 
 	if err != nil {
-		slog.Error(err.Error())
+		fmt.Println(err.Error())
 		return nil, false
 	}
 
@@ -120,13 +119,13 @@ func sendSubscribeMail(host string, port int, userName, password, email, token s
 	configDirPath := path.Join(path.Dir(b))
 	t, err := template.ParseFiles(fmt.Sprintf("%s/template/subscription.html", configDirPath))
 	if err != nil {
-		slog.Error(err.Error())
+		fmt.Println(err.Error())
 		return err
 	}
 
 	var body bytes.Buffer
 	if err := t.Execute(&body, data); err != nil {
-		slog.Error(err.Error())
+		fmt.Println(err.Error())
 		return err
 	}
 

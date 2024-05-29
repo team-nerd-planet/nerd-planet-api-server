@@ -1,7 +1,7 @@
 package tag
 
 import (
-	"log/slog"
+	"fmt"
 
 	"github.com/team-nerd-planet/api-server/internal/entity"
 )
@@ -19,7 +19,7 @@ func NewJobTagUsecase(jobTagRepo entity.JobTagRepo) JobTagUsecase {
 func (stu JobTagUsecase) FindAll() (*[]entity.JobTag, bool) {
 	jobTags, err := stu.jobTagRepo.FindAll()
 	if err != nil {
-		slog.Error(err.Error())
+		fmt.Println(err.Error())
 		return nil, false
 	}
 
