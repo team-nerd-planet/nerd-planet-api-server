@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -21,7 +21,7 @@ func ErrorHandler(c *gin.Context) {
 	c.Next()
 
 	for _, err := range c.Errors {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 	}
 
 	c.JSON(http.StatusInternalServerError, "")

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"log/slog"
 	"net/smtp"
 	"path"
 	"runtime"
@@ -30,14 +31,17 @@ func NewSubscriptionUsecase(
 	}
 }
 
-func (su SubscriptionUsecase) ApplySubscription(subscription entity.Subscription) (*entity.Subscription, bool) {
+func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.Subscription, bool) {
+	slog.Info("SubscriptionUsecase_Apply", "subscription", subscription)
 	id, err := su.subscriptionRepo.ExistEmail(subscription.Email)
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 
 	token := emailToken{Subscription: subscription}
+	slog.Info("Init Token", "token", token)
+
 	token.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(1 * time.Hour))
 
 	if id == nil {
@@ -47,13 +51,18 @@ func (su SubscriptionUsecase) ApplySubscription(subscription entity.Subscription
 		token.Subscription.ID = uint(*id)
 	}
 
+	slog.Info("Token", "token", token)
+
 	tokenStr, err := generateEmailToken(token, su.conf.Jwt.SecretKey)
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 
+	slog.Info("Generate Token", "str", tokenStr)
+
 	if err := sendSubscribeMail(su.conf.Smtp.Host, su.conf.Smtp.Port, su.conf.Smtp.UserName, su.conf.Smtp.Password, subscription.Email, tokenStr); err != nil {
+		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 
@@ -77,7 +86,7 @@ func (su SubscriptionUsecase) Subscribe(token string) (*entity.Subscription, boo
 
 	emailToken, err = verifyEmailToken(token, su.conf.Jwt.SecretKey)
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 
@@ -93,7 +102,7 @@ func (su SubscriptionUsecase) Subscribe(token string) (*entity.Subscription, boo
 	}
 
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 
@@ -119,13 +128,13 @@ func sendSubscribeMail(host string, port int, userName, password, email, token s
 	configDirPath := path.Join(path.Dir(b))
 	t, err := template.ParseFiles(fmt.Sprintf("%s/template/subscription.html", configDirPath))
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return err
 	}
 
 	var body bytes.Buffer
 	if err := t.Execute(&body, data); err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return err
 	}
 

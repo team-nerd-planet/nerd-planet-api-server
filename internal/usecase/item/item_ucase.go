@@ -1,7 +1,7 @@
 package item
 
 import (
-	"fmt"
+	"log/slog"
 
 	"github.com/team-nerd-planet/api-server/internal/entity"
 )
@@ -19,7 +19,7 @@ func NewItemUsecase(itemRepo entity.ItemRepo) ItemUsecase {
 func (iu ItemUsecase) CountViewItem(company *string, companySizes *[]entity.CompanySizeType, jobTags, skillTags *[]int64) (*int64, bool) {
 	count, err := iu.itemRepo.CountView(company, companySizes, jobTags, skillTags)
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 
@@ -29,7 +29,7 @@ func (iu ItemUsecase) CountViewItem(company *string, companySizes *[]entity.Comp
 func (mu ItemUsecase) FindAllViewItem(company *string, companySizes *[]entity.CompanySizeType, jobTags, skillTags *[]int64, perPage int, page int) (*[]entity.ItemView, bool) {
 	viewItems, err := mu.itemRepo.FindAllView(company, companySizes, jobTags, skillTags, perPage, page)
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 

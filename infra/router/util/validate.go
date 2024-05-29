@@ -1,7 +1,7 @@
 package util
 
 import (
-	"fmt"
+	"log/slog"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +11,7 @@ func ValidateBody[T any](c *gin.Context) (*T, error) {
 	var input T
 
 	if err := c.ShouldBind(&input); err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return nil, err
 	}
 
@@ -21,11 +21,8 @@ func ValidateBody[T any](c *gin.Context) (*T, error) {
 func ValidateQuery[T any](c *gin.Context) (*T, error) {
 	var input T
 
-	values := c.Request.URL.Query()
-	fmt.Println(values)
-
 	if err := c.ShouldBindQuery(&input); err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return nil, err
 	}
 
@@ -37,7 +34,7 @@ func ValidateInt64Param(c *gin.Context, key string) (*int64, error) {
 	id, err := strconv.ParseInt(param, 10, 64)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error(), "error", err)
 		return nil, err
 	}
 
