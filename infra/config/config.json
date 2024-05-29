@@ -17,5 +17,14 @@
   "SWAGGER": {
     "HOST": "localhost:5000",
     "BASE_PATH": "/"
+  },
+  "JWT": {
+    "SECRET_KEY": "key"
+  },
+  "SMTP": {
+    "HOST": "localhost",
+    "PORT": "0",
+    "USER_NAME": "nerd",
+    "PASSWORD": "planet1!"
   }
 }
