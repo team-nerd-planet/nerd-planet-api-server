@@ -1,6 +1,10 @@
 package entity
 
-import "github.com/lib/pq"
+import (
+	"time"
+
+	"github.com/lib/pq"
+)
 
 type Subscription struct {
 	ID                      uint          `gorm:"column:id;primarykey"`
@@ -11,6 +15,7 @@ type Subscription struct {
 	PreferredCompanySizeArr pq.Int64Array `gorm:"column:preferred_company_size_arr;type:int8[];not null"`
 	PreferredJobArr         pq.Int64Array `gorm:"column:preferred_job_arr;type:int8[];not null"`
 	PreferredSkillArr       pq.Int64Array `gorm:"column:preferred_skill_arr;type:int8[];not null"`
+	Published               time.Time     `gorm:"column:published;type:timestamp;not null"`
 }
 
 type SubscriptionRepo interface {

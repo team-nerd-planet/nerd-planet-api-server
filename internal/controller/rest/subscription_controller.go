@@ -32,7 +32,7 @@ func (sc SubscriptionController) Apply(req subscription_dto.ApplyReq) (*subscrip
 }
 
 func (sc SubscriptionController) Approve(req subscription_dto.ApproveReq) (*subscription_dto.ApproveRes, bool) {
-	subscription, ok := sc.subscriptionUcase.Subscribe(req.Token)
+	subscription, ok := sc.subscriptionUcase.Approve(req.Token)
 	if !ok {
 		return nil, false
 	}

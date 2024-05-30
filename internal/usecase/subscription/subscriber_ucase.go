@@ -38,6 +38,7 @@ func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.S
 		return nil, false
 	}
 
+	subscription.Published = time.Now()
 	token := emailToken{Subscription: subscription}
 	token.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(1 * time.Hour))
 
@@ -62,15 +63,7 @@ func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.S
 	return &subscription, true
 }
 
-func (su SubscriptionUsecase) CancelSubscription(email string) (*entity.Subscription, bool) {
-	//이메일 조회
-	//JWT 토큰 생성
-	//이메일이 없으면 실패 반환
-	//이메일이 있으면 DELETE 이메일 전송
-	return nil, true
-}
-
-func (su SubscriptionUsecase) Subscribe(token string) (*entity.Subscription, bool) {
+func (su SubscriptionUsecase) Approve(token string) (*entity.Subscription, bool) {
 	var (
 		emailToken   *emailToken
 		err          error
@@ -100,14 +93,6 @@ func (su SubscriptionUsecase) Subscribe(token string) (*entity.Subscription, boo
 	}
 
 	return subscription, true
-}
-
-func (su SubscriptionUsecase) Resubscribe(subscription entity.Subscription) (*entity.Subscription, bool) {
-	return nil, false
-}
-
-func (su SubscriptionUsecase) Unsubscribe(email string) (*entity.Subscription, bool) {
-	return nil, false
 }
 
 func sendSubscribeMail(smtpConf config.Smtp, serverConf config.Swagger, email, token string) error {
