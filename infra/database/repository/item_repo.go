@@ -70,17 +70,17 @@ func (clr *ItemRepo) FindAllView(company *string, companySizes *[]entity.Company
 		param = append(param, fmt.Sprintf("%%%s%%", *company))
 	}
 
-	if companySizes != nil {
+	if companySizes != nil && len(*companySizes) > 0 {
 		where = append(where, "company_size IN ?")
 		param = append(param, *companySizes)
 	}
 
-	if jobTags != nil {
+	if jobTags != nil && len(*jobTags) > 0 {
 		where = append(where, "job_tags_id_arr && ?") // `&&`: overlap (have elements in common)
 		param = append(param, getArrToString(*jobTags))
 	}
 
-	if skillTags != nil {
+	if skillTags != nil && len(*skillTags) > 0 {
 		where = append(where, "skill_tags_id_arr && ?") // `&&`: overlap (have elements in common)
 		param = append(param, getArrToString(*skillTags))
 	}
