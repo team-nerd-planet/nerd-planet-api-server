@@ -111,6 +111,19 @@ definitions:
         description: 구독 신청 메일 전송 결과
         type: boolean
     type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApproveReq:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApproveRes:
+    properties:
+      ok:
+        description: 구독 인증 결과
+        type: boolean
+    type: object
   github_com_team-nerd-planet_api-server_internal_controller_rest_dto_tag_dto.FindAllJobTagRes:
     properties:
       id:
@@ -247,6 +260,36 @@ paths:
           schema:
             $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
       summary: Apply subscription
+      tags:
+      - subscription
+  /v1/subscription/approve:
+    post:
+      consumes:
+      - application/json
+      description: approve for subscription
+      parameters:
+      - description: contents for approving for subscription.
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApproveReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApproveRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+      summary: Approve subscription
       tags:
       - subscription
   /v1/tag/job:

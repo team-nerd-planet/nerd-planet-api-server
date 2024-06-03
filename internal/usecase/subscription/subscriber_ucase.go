@@ -55,7 +55,14 @@ func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.S
 		return nil, false
 	}
 
-	if err := sendSubscribeMail(su.conf.Smtp, su.conf.Swagger, subscription.Email, tokenStr); err != nil {
+	var name string
+	if token.Subscription.Name != nil {
+		name = *token.Subscription.Name
+	} else {
+		name = token.Subscription.Email
+	}
+
+	if err := sendSubscribeMail(su.conf.Smtp, name, subscription.Email, tokenStr); err != nil {
 		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
@@ -72,8 +79,8 @@ func (su SubscriptionUsecase) Approve(token string) (*entity.Subscription, bool)
 
 	emailToken, err = verifyEmailToken(token, su.conf.Jwt.SecretKey)
 	if err != nil {
-		slog.Error(err.Error(), "error", err)
-		return nil, false
+		slog.Warn(err.Error())
+		return nil, true
 	}
 
 	switch emailToken.Type {
@@ -95,12 +102,12 @@ func (su SubscriptionUsecase) Approve(token string) (*entity.Subscription, bool)
 	return subscription, true
 }
 
-func sendSubscribeMail(smtpConf config.Smtp, serverConf config.Swagger, email, token string) error {
+func sendSubscribeMail(smtpConf config.Smtp, name, email, token string) error {
 	data := struct {
-		Host  string
+		Name  string
 		Token string
 	}{
-		Host:  serverConf.Host,
+		Name:  name,
 		Token: token,
 	}
 

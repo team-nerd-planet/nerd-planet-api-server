@@ -38,7 +38,7 @@ func Apply(c *gin.Context, ctrl rest.SubscriptionController) {
 	c.JSON(http.StatusOK, res)
 }
 
-func Approve(c *gin.Context, ctrl rest.SubscriptionController) {
+func ApproveGet(c *gin.Context, ctrl rest.SubscriptionController) {
 	req, err := util.ValidateQuery[subscription_dto.ApproveReq](c)
 	if err != nil {
 		c.Redirect(http.StatusBadRequest, "https://www.nerdplanet.app")
@@ -56,4 +56,33 @@ func Approve(c *gin.Context, ctrl rest.SubscriptionController) {
 	} else {
 		c.Redirect(http.StatusBadRequest, "https://www.nerdplanet.app")
 	}
+}
+
+// Approve
+//
+// @Summary			Approve subscription
+// @Description		approve for subscription
+// @Tags			subscription
+// @Schemes			http
+// @Accept			json
+// @Produce			json
+// @Param   		request body subscription_dto.ApproveReq true "contents for approving for subscription."
+// @Success			200 {object} subscription_dto.ApproveRes
+// @Failure			400 {object} util.HTTPError
+// @Failure			500 {object} util.HTTPError
+// @Router			/v1/subscription/approve [post]
+func Approve(c *gin.Context, ctrl rest.SubscriptionController) {
+	req, err := util.ValidateBody[subscription_dto.ApproveReq](c)
+	if err != nil {
+		util.NewError(c, http.StatusBadRequest, err)
+		return
+	}
+
+	res, ok := ctrl.Approve(*req)
+	if !ok {
+		util.NewError(c, http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
 }

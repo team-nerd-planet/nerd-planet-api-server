@@ -51,7 +51,8 @@ func NewRouter(conf *config.Config, itemCtrl rest.ItemController, tagCtrl rest.T
 		subscription := v1.Group("/subscription")
 		{
 			subscription.POST("/apply", func(c *gin.Context) { handler.Apply(c, subscriptionCtrl) })
-			subscription.GET("/approve", func(c *gin.Context) { handler.Approve(c, subscriptionCtrl) })
+			subscription.GET("/approve", func(c *gin.Context) { handler.ApproveGet(c, subscriptionCtrl) })
+			subscription.POST("/approve", func(c *gin.Context) { handler.Approve(c, subscriptionCtrl) })
 		}
 	}
 

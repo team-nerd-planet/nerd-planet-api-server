@@ -154,6 +154,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/subscription/approve": {
+            "post": {
+                "description": "approve for subscription",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscription"
+                ],
+                "summary": "Approve subscription",
+                "parameters": [
+                    {
+                        "description": "contents for approving for subscription.",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApproveReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApproveRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/tag/job": {
             "get": {
                 "description": "list job tags",
@@ -401,6 +447,26 @@ const docTemplate = `{
             "properties": {
                 "ok": {
                     "description": "구독 신청 메일 전송 결과",
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApproveReq": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApproveRes": {
+            "type": "object",
+            "properties": {
+                "ok": {
+                    "description": "구독 인증 결과",
                     "type": "boolean"
                 }
             }
