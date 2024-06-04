@@ -1,85 +1,25 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>이메일 인증</title>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
-    <style>
-        body {
-            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #1c1c20;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            text-align: center;
-            padding: 10px 0;
-        }
-        .header h1 {
-            margin: 0;
-            color: #f8f9fe;
-        }
-        .content {
-            padding: 20px;
-            text-align: center;
-        }
-        .content p {
-            font-size: 16px;
-            color: #f8f9fe;
-        }
-        .content p span {
-            font-size: 16px;
-            color: #93ebff;
-        }
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: 700;
-            color: #26272b;
-            background-color: #93ebff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 12px;
-            color: #999999;
-        }
-        .plaa-flex {
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            padding: 36px;
-        }
-    </style>
 </head>
-<body>
-    <div class="container">
-        <div class="plaa-flex">
+<body style="font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+    <div style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #1c1c20; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <div style="display:flex; justify-content:center; align-items:center; padding: 36px;">
             <img src="https://imagedelivery.net/6qzLODAqs2g1LZbVYqtuQw/c128208d-c3ff-488f-93d7-4ba3ce866c00/public" width="120px" height="120px" alt="Plaa"/>
         </div>
-        <div class="header">
-            <h1>이메일 인증</h1>
+        <div style="text-align: center; padding: 10px 0;">
+            <h1 style="margin: 0; color: #f8f9fe;">이메일 인증</h1>
         </div>
-        <div class="content">
-            <p>안녕하세요, <span>{{.Name}}</span>님! 너드플래닛입니다.</p>
-            <p>구독해주셔서 정말 감사해요</p>
-            <p>아래 버튼을 클릭하고 이메일 주소를 인증해주세요.</p>
-            <a href="https://www.nerdplanet.app/approve?token={{.Token}}" class="button">이메일 인증</a>
+        <div style="padding: 20px; text-align: center;">
+            <p style="font-size: 16px; color: #f8f9fe;">안녕하세요, <span style="font-size: 16px; color: #93ebff;">{{.Name}}</span>님! 너드플래닛입니다.</p>
+            <p style="font-size: 16px; color: #f8f9fe;">구독해주셔서 정말 감사해요</p>
+            <p style="font-size: 16px; color: #f8f9fe;">아래 버튼을 클릭하고 이메일 주소를 인증해주세요.</p>
+            <a href="https://www.nerdplanet.app/approve?token={{.Token}}" style="display: inline-block; padding: 10px 20px; font-size: 16px; font-weight: 700; color: #26272b; background-color: #93ebff; text-decoration: none; border-radius: 5px;">이메일 인증</a>
         </div>
-        <div class="footer">
+        <div style="text-align: center; padding: 20px; font-size: 12px; color: #999999;">
             <p>이 메일은 자동으로 발송된 메일입니다. 회신하지 마세요.</p>
         </div>
     </div>
