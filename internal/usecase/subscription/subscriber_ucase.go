@@ -2,7 +2,6 @@ package subscription
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"html/template"
 	"log/slog"
@@ -11,58 +10,65 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/team-nerd-planet/api-server/infra/config"
 	"github.com/team-nerd-planet/api-server/internal/entity"
+	"github.com/team-nerd-planet/api-server/internal/usecase/token"
+	"github.com/team-nerd-planet/api-server/internal/usecase/token/model"
 )
 
 type SubscriptionUsecase struct {
 	subscriptionRepo entity.SubscriptionRepo
+	tokenUcase       token.TokenUsecase
 	conf             *config.Config
 }
 
 func NewSubscriptionUsecase(
 	subscriptionRepo entity.SubscriptionRepo,
+	tokenUsecase token.TokenUsecase,
 	config *config.Config,
 ) SubscriptionUsecase {
 	return SubscriptionUsecase{
 		subscriptionRepo: subscriptionRepo,
+		tokenUcase:       tokenUsecase,
 		conf:             config,
 	}
 }
 
 func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.Subscription, bool) {
+	var (
+		emailToken    model.EmailToken
+		emailTokenStr string
+		name          string
+	)
+
+	subscription.Published = time.Now()
+
+	if subscription.Name != nil {
+		name = *subscription.Name
+	} else {
+		name = subscription.Email
+	}
+
 	id, err := su.subscriptionRepo.ExistEmail(subscription.Email)
 	if err != nil {
 		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 
-	subscription.Published = time.Now()
-	token := emailToken{Subscription: subscription}
-	token.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(1 * time.Hour))
-
 	if id == nil {
-		token.Type = SUBSCRIBE
+		emailToken = model.NewEmailToken(model.SUBSCRIBE, subscription)
 	} else {
-		token.Type = RESUBSCRIBE
-		token.Subscription.ID = uint(*id)
+		subscription.ID = uint(*id)
+		emailToken = model.NewEmailToken(model.RESUBSCRIBE, subscription)
 	}
 
-	tokenStr, err := generateEmailToken(token, su.conf.Jwt.SecretKey)
+	emailTokenStr, err = su.tokenUcase.GenerateToken(emailToken)
 	if err != nil {
 		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
 
-	var name string
-	if token.Subscription.Name != nil {
-		name = *token.Subscription.Name
-	} else {
-		name = token.Subscription.Email
-	}
-
-	if err := sendSubscribeMail(su.conf.Smtp, name, subscription.Email, tokenStr); err != nil {
+	if err := sendSubscribeMail(su.conf.Smtp, name, subscription.Email, emailTokenStr); err != nil {
 		slog.Error(err.Error(), "error", err)
 		return nil, false
 	}
@@ -72,23 +78,22 @@ func (su SubscriptionUsecase) Apply(subscription entity.Subscription) (*entity.S
 
 func (su SubscriptionUsecase) Approve(token string) (*entity.Subscription, bool) {
 	var (
-		emailToken   *emailToken
+		emailToken   model.EmailToken
 		err          error
 		subscription *entity.Subscription
 	)
 
-	emailToken, err = verifyEmailToken(token, su.conf.Jwt.SecretKey)
-	if err != nil {
+	if err := su.tokenUcase.VerifyToken(token, &emailToken); err != nil {
 		slog.Warn(err.Error())
 		return nil, true
 	}
 
-	switch emailToken.Type {
-	case SUBSCRIBE:
+	switch emailToken.TokenType {
+	case model.SUBSCRIBE:
 		subscription, err = su.subscriptionRepo.Create(emailToken.Subscription)
-	case RESUBSCRIBE:
+	case model.RESUBSCRIBE:
 		subscription, err = su.subscriptionRepo.Update(int64(emailToken.Subscription.ID), emailToken.Subscription)
-	case UNSUBSCRIBE:
+	case model.UNSUBSCRIBE:
 		subscription, err = su.subscriptionRepo.Delete(int64(emailToken.Subscription.ID))
 	default:
 		return nil, false
@@ -137,58 +142,4 @@ func sendSubscribeMail(smtpConf config.Smtp, name, email, token string) error {
 	}
 
 	return nil
-}
-
-var (
-	errTokenExpired            = errors.New("token has invalid claims: token is expired")
-	errUnexpectedSigningMethod = errors.New("unexpected signing method: HMAC-SHA")
-	errSignatureInvalid        = errors.New("token signature is invalid: signature is invalid")
-)
-
-type tokenType int
-
-const (
-	SUBSCRIBE tokenType = iota
-	RESUBSCRIBE
-	UNSUBSCRIBE
-)
-
-type emailToken struct {
-	Type         tokenType           `json:"type"`
-	Subscription entity.Subscription `json:"subscription"`
-	jwt.RegisteredClaims
-}
-
-func generateEmailToken(token emailToken, secretKey string) (string, error) {
-	newToken := jwt.NewWithClaims(jwt.SigningMethodHS256, token)
-	return newToken.SignedString([]byte(secretKey))
-}
-
-func verifyEmailToken(tokenString string, secretKey string) (*emailToken, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &emailToken{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errUnexpectedSigningMethod
-		}
-
-		expiration, err := token.Claims.GetExpirationTime()
-		if err != nil {
-			return nil, err
-		}
-
-		if expiration.Time.Unix() < time.Now().Unix() {
-			return nil, errTokenExpired
-		}
-
-		return []byte(secretKey), nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	claims, ok := token.Claims.(*emailToken)
-	if !ok {
-		return nil, errSignatureInvalid
-	}
-
-	return claims, nil
 }

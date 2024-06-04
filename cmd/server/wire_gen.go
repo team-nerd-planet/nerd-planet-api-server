@@ -16,6 +16,7 @@ import (
 	"github.com/team-nerd-planet/api-server/internal/usecase/item"
 	"github.com/team-nerd-planet/api-server/internal/usecase/subscription"
 	"github.com/team-nerd-planet/api-server/internal/usecase/tag"
+	"github.com/team-nerd-planet/api-server/internal/usecase/token"
 )
 
 // Injectors from wire.go:
@@ -38,7 +39,8 @@ func InitServer() (router.Router, error) {
 	skillTagUsecase := tag.NewSkillTagUsecase(skillTagRepo)
 	tagController := rest.NewTagController(jobTagUsecase, skillTagUsecase)
 	subscriptionRepo := repository.NewSubscriptionRepo(databaseDatabase)
-	subscriptionUsecase := subscription.NewSubscriptionUsecase(subscriptionRepo, configConfig)
+	tokenUsecase := token.NewTokenUsecase(configConfig)
+	subscriptionUsecase := subscription.NewSubscriptionUsecase(subscriptionRepo, tokenUsecase, configConfig)
 	subscriptionController := rest.NewSubscriptionController(subscriptionUsecase)
 	feedRepo := repository.NewFeedRepo(databaseDatabase)
 	feedUsecase := feed.NewFeedUsecase(feedRepo)

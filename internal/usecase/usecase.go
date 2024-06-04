@@ -6,6 +6,7 @@ import (
 	"github.com/team-nerd-planet/api-server/internal/usecase/item"
 	"github.com/team-nerd-planet/api-server/internal/usecase/subscription"
 	"github.com/team-nerd-planet/api-server/internal/usecase/tag"
+	"github.com/team-nerd-planet/api-server/internal/usecase/token"
 )
 
 var UsecaseSet = wire.NewSet(
@@ -14,4 +15,5 @@ var UsecaseSet = wire.NewSet(
 	tag.NewSkillTagUsecase,
 	subscription.NewSubscriptionUsecase,
 	feed.NewFeedUsecase,
+	token.NewTokenUsecase,
 )
