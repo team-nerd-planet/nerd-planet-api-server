@@ -26,7 +26,6 @@ import (
 // @Param			page			query	int							true	"페이지"
 // @Success			200 {object} dto.Paginated[[]item_dto.FindAllItemRes]
 // @Failure			400 {object} util.HTTPError
-// @Failure			404 {object} util.HTTPError
 // @Failure			500 {object} util.HTTPError
 // @Router			/v1/item [get]
 func ListItems(c *gin.Context, ctrl rest.ItemController) {

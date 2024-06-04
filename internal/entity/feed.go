@@ -24,3 +24,7 @@ type Feed struct {
 	RssID       uint            `gorm:"column:rss_id;type:int8;not null"`
 	Items       []Item          `gorm:"foreignKey:FeedID"`
 }
+
+type FeedRepo interface {
+	FindAll(keyword *string) ([]Feed, error)
+}

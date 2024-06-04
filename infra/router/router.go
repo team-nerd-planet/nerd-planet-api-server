@@ -22,7 +22,13 @@ type Router struct {
 	conf   *config.Config
 }
 
-func NewRouter(conf *config.Config, itemCtrl rest.ItemController, tagCtrl rest.TagController, subscriptionCtrl rest.SubscriptionController) Router {
+func NewRouter(
+	conf *config.Config,
+	itemCtrl rest.ItemController,
+	tagCtrl rest.TagController,
+	subscriptionCtrl rest.SubscriptionController,
+	feedCtrl rest.FeedController,
+) Router {
 	if conf.Rest.Mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -39,20 +45,25 @@ func NewRouter(conf *config.Config, itemCtrl rest.ItemController, tagCtrl rest.T
 
 		item := v1.Group("/item")
 		{
-			item.GET("/", cache.CachePage(s, time.Hour, func(c *gin.Context) { handler.ListItems(c, itemCtrl) }))
+			item.GET("/", cache.CachePage(s, time.Hour, func(ctx *gin.Context) { handler.ListItems(ctx, itemCtrl) }))
 		}
 
 		tag := v1.Group("/tag")
 		{
-			tag.GET("/job", cache.CachePage(s, time.Hour, func(c *gin.Context) { handler.ListJobTags(c, tagCtrl) }))
-			tag.GET("/skill", cache.CachePage(s, time.Hour, func(c *gin.Context) { handler.ListSkillTags(c, tagCtrl) }))
+			tag.GET("/job", cache.CachePage(s, time.Hour, func(ctx *gin.Context) { handler.ListJobTags(ctx, tagCtrl) }))
+			tag.GET("/skill", cache.CachePage(s, time.Hour, func(ctx *gin.Context) { handler.ListSkillTags(ctx, tagCtrl) }))
 		}
 
 		subscription := v1.Group("/subscription")
 		{
-			subscription.POST("/apply", func(c *gin.Context) { handler.Apply(c, subscriptionCtrl) })
-			subscription.GET("/approve", func(c *gin.Context) { handler.ApproveGet(c, subscriptionCtrl) })
-			subscription.POST("/approve", func(c *gin.Context) { handler.Approve(c, subscriptionCtrl) })
+			subscription.POST("/apply", func(ctx *gin.Context) { handler.Apply(ctx, subscriptionCtrl) })
+			subscription.GET("/approve", func(ctx *gin.Context) { handler.ApproveGet(ctx, subscriptionCtrl) })
+			subscription.POST("/approve", func(ctx *gin.Context) { handler.Approve(ctx, subscriptionCtrl) })
+		}
+
+		feed := v1.Group("/feed")
+		{
+			feed.GET("/search", func(ctx *gin.Context) { handler.SearchFeedName(ctx, feedCtrl) })
 		}
 	}
 

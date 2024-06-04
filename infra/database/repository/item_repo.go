@@ -29,7 +29,7 @@ func (clr *ItemRepo) CountView(company *string, companySizes *[]entity.CompanySi
 
 	if company != nil {
 		where = append(where, "feed_name LIKE ?")
-		param = append(param, fmt.Sprintf("%%%s%%", *company))
+		param = append(param, fmt.Sprintf("%s%%", *company))
 	}
 
 	if companySizes != nil {

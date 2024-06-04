@@ -15,6 +15,52 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/feed/search": {
+            "get": {
+                "description": "search feed's name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Search Feed Name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "회사 이름 검색 키워드",
+                        "name": "name_keyword",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_feed_dto.SearchRes"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/item": {
             "get": {
                 "description": "list items",
@@ -89,12 +135,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
                         }
@@ -324,6 +364,17 @@ const docTemplate = `{
                 },
                 "total_page": {
                     "type": "integer"
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_feed_dto.SearchRes": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },

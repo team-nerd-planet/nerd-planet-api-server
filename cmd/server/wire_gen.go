@@ -12,6 +12,7 @@ import (
 	"github.com/team-nerd-planet/api-server/infra/database/repository"
 	"github.com/team-nerd-planet/api-server/infra/router"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
+	"github.com/team-nerd-planet/api-server/internal/usecase/feed"
 	"github.com/team-nerd-planet/api-server/internal/usecase/item"
 	"github.com/team-nerd-planet/api-server/internal/usecase/subscription"
 	"github.com/team-nerd-planet/api-server/internal/usecase/tag"
@@ -39,6 +40,9 @@ func InitServer() (router.Router, error) {
 	subscriptionRepo := repository.NewSubscriptionRepo(databaseDatabase)
 	subscriptionUsecase := subscription.NewSubscriptionUsecase(subscriptionRepo, configConfig)
 	subscriptionController := rest.NewSubscriptionController(subscriptionUsecase)
-	routerRouter := router.NewRouter(configConfig, itemController, tagController, subscriptionController)
+	feedRepo := repository.NewFeedRepo(databaseDatabase)
+	feedUsecase := feed.NewFeedUsecase(feedRepo)
+	feedController := rest.NewFeedController(feedUsecase)
+	routerRouter := router.NewRouter(configConfig, itemController, tagController, subscriptionController, feedController)
 	return routerRouter, nil
 }

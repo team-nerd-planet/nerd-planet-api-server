@@ -23,6 +23,13 @@ definitions:
       total_page:
         type: integer
     type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_feed_dto.SearchRes:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes:
     properties:
       company_size:
@@ -168,6 +175,36 @@ info:
   title: nerd-planet-api-server
   version: "1.0"
 paths:
+  /v1/feed/search:
+    get:
+      consumes:
+      - application/json
+      description: search feed's name
+      parameters:
+      - description: 회사 이름 검색 키워드
+        in: query
+        name: name_keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_feed_dto.SearchRes'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+      summary: Search Feed Name
+      tags:
+      - feed
   /v1/item:
     get:
       consumes:
@@ -219,10 +256,6 @@ paths:
             $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto.Paginated-array_github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto_FindAllItemRes'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
         "500":
