@@ -23,7 +23,7 @@
   },
   "SMTP": {
     "HOST": "localhost",
-    "PORT": "0",
+    "PORT": 0,
     "USER_NAME": "nerd",
     "PASSWORD": "planet1!"
   }
