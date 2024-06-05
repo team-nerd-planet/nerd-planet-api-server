@@ -21,7 +21,7 @@ func ErrorHandler(c *gin.Context) {
 	c.Next()
 
 	for _, err := range c.Errors {
-		slog.Error(err.Error(), "error", err)
+		slog.Error(err.Error())
 	}
 
 	c.JSON(http.StatusInternalServerError, "")

@@ -6,10 +6,10 @@ import (
 )
 
 type SkillTagRepo struct {
-	db *database.Database
+	db database.Database
 }
 
-func NewSkillTagRepo(db *database.Database) entity.SkillTagRepo {
+func NewSkillTagRepo(db database.Database) entity.SkillTagRepo {
 	return &SkillTagRepo{
 		db: db,
 	}

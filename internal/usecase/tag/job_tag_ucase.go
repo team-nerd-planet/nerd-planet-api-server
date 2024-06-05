@@ -19,7 +19,7 @@ func NewJobTagUsecase(jobTagRepo entity.JobTagRepo) JobTagUsecase {
 func (stu JobTagUsecase) FindAll() (*[]entity.JobTag, bool) {
 	jobTags, err := stu.jobTagRepo.FindAll()
 	if err != nil {
-		slog.Error(err.Error(), "error", err)
+		slog.Error(err.Error())
 		return nil, false
 	}
 

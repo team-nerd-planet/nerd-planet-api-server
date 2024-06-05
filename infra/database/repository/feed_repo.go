@@ -9,10 +9,10 @@ import (
 )
 
 type FeedRepo struct {
-	db *database.Database
+	db database.Database
 }
 
-func NewFeedRepo(db *database.Database) entity.FeedRepo {
+func NewFeedRepo(db database.Database) entity.FeedRepo {
 	return &FeedRepo{
 		db: db,
 	}

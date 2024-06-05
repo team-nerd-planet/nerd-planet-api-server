@@ -14,6 +14,7 @@ import (
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
 	"github.com/team-nerd-planet/api-server/internal/usecase/feed"
 	"github.com/team-nerd-planet/api-server/internal/usecase/item"
+	"github.com/team-nerd-planet/api-server/internal/usecase/smtp"
 	"github.com/team-nerd-planet/api-server/internal/usecase/subscription"
 	"github.com/team-nerd-planet/api-server/internal/usecase/tag"
 	"github.com/team-nerd-planet/api-server/internal/usecase/token"
@@ -22,14 +23,8 @@ import (
 // Injectors from wire.go:
 
 func InitServer() (router.Router, error) {
-	configConfig, err := config.NewConfig()
-	if err != nil {
-		return router.Router{}, err
-	}
-	databaseDatabase, err := database.NewDatabase(configConfig)
-	if err != nil {
-		return router.Router{}, err
-	}
+	configConfig := config.NewConfig()
+	databaseDatabase := database.NewDatabase(configConfig)
 	itemRepo := repository.NewItemRepo(databaseDatabase)
 	itemUsecase := item.NewItemUsecase(itemRepo)
 	itemController := rest.NewItemController(itemUsecase)
@@ -40,7 +35,8 @@ func InitServer() (router.Router, error) {
 	tagController := rest.NewTagController(jobTagUsecase, skillTagUsecase)
 	subscriptionRepo := repository.NewSubscriptionRepo(databaseDatabase)
 	tokenUsecase := token.NewTokenUsecase(configConfig)
-	subscriptionUsecase := subscription.NewSubscriptionUsecase(subscriptionRepo, tokenUsecase, configConfig)
+	smtpUsecase := smtp.NewSmtpUsecase(configConfig)
+	subscriptionUsecase := subscription.NewSubscriptionUsecase(subscriptionRepo, tokenUsecase, smtpUsecase)
 	subscriptionController := rest.NewSubscriptionController(subscriptionUsecase)
 	feedRepo := repository.NewFeedRepo(databaseDatabase)
 	feedUsecase := feed.NewFeedUsecase(feedRepo)

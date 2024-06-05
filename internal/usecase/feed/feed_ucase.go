@@ -19,7 +19,7 @@ func NewFeedUsecase(feedRepo entity.FeedRepo) FeedUsecase {
 func (fu FeedUsecase) FindAll(keyword *string) (*[]entity.Feed, bool) {
 	feeds, err := fu.feedRepo.FindAll(keyword)
 	if err != nil {
-		slog.Error(err.Error(), "error", err)
+		slog.Error(err.Error())
 		return nil, false
 	}
 

@@ -19,7 +19,7 @@ func NewSkillTagUsecase(skillTagRepo entity.SkillTagRepo) SkillTagUsecase {
 func (stu SkillTagUsecase) FindAll() (*[]entity.SkillTag, bool) {
 	skillTags, err := stu.skillTagRepo.FindAll()
 	if err != nil {
-		slog.Error(err.Error(), "error", err)
+		slog.Error(err.Error())
 		return nil, false
 	}
 

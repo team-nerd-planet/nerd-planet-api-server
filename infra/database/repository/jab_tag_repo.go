@@ -6,10 +6,10 @@ import (
 )
 
 type JobTagRepo struct {
-	db *database.Database
+	db database.Database
 }
 
-func NewJobTagRepo(db *database.Database) entity.JobTagRepo {
+func NewJobTagRepo(db database.Database) entity.JobTagRepo {
 	return &JobTagRepo{
 		db: db,
 	}

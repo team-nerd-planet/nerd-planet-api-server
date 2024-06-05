@@ -51,7 +51,7 @@ type Smtp struct {
 	Password string `mapstructure:"PASSWORD"`
 }
 
-func NewConfig() (*Config, error) {
+func NewConfig() Config {
 	_, b, _, _ := runtime.Caller(0)
 	configDirPath := path.Join(path.Dir(b))
 
@@ -63,7 +63,7 @@ func NewConfig() (*Config, error) {
 	err := viper.ReadInConfig()
 	if err != nil {
 		slog.Error("Read config file.", "err", err)
-		return nil, err
+		panic(err)
 	}
 
 	viper.AutomaticEnv()
@@ -71,8 +71,8 @@ func NewConfig() (*Config, error) {
 	err = viper.Unmarshal(&conf)
 	if err != nil {
 		slog.Error("Unmarshal config file.", "err", err)
-		return nil, err
+		panic(err)
 	}
 
-	return &conf, nil
+	return conf
 }

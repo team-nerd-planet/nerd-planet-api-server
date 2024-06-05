@@ -9,10 +9,10 @@ import (
 )
 
 type SubscriptionRepo struct {
-	db *database.Database
+	db database.Database
 }
 
-func NewSubscriptionRepo(db *database.Database) entity.SubscriptionRepo {
+func NewSubscriptionRepo(db database.Database) entity.SubscriptionRepo {
 	db.AutoMigrate(&entity.Subscription{})
 
 	return &SubscriptionRepo{

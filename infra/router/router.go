@@ -19,11 +19,11 @@ import (
 type Router struct {
 	router *gin.Engine
 	store  *persistence.InMemoryStore
-	conf   *config.Config
+	conf   config.Config
 }
 
 func NewRouter(
-	conf *config.Config,
+	conf config.Config,
 	itemCtrl rest.ItemController,
 	tagCtrl rest.TagController,
 	subscriptionCtrl rest.SubscriptionController,

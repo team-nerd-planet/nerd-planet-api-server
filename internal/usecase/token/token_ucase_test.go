@@ -12,7 +12,7 @@ import (
 )
 
 func Test_GenerateAndVerifyEmailToken(t *testing.T) {
-	tokenUsecase := NewTokenUsecase(&config.Config{
+	tokenUsecase := NewTokenUsecase(config.Config{
 		Jwt: config.Jwt{
 			SecretKey: "test_key",
 		},

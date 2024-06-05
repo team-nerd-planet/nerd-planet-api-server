@@ -15,18 +15,18 @@ var (
 )
 
 type TokenUsecase struct {
-	conf *config.Config
+	jwtConf config.Jwt
 }
 
-func NewTokenUsecase(conf *config.Config) TokenUsecase {
+func NewTokenUsecase(conf config.Config) TokenUsecase {
 	return TokenUsecase{
-		conf: conf,
+		jwtConf: conf.Jwt,
 	}
 }
 
 func (tu TokenUsecase) GenerateToken(claims jwt.Claims) (string, error) {
 	newToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return newToken.SignedString([]byte(tu.conf.Jwt.SecretKey))
+	return newToken.SignedString([]byte(tu.jwtConf.SecretKey))
 }
 
 func (tu TokenUsecase) VerifyToken(tokenString string, claims jwt.Claims) (err error) {
@@ -43,7 +43,7 @@ func (tu TokenUsecase) VerifyToken(tokenString string, claims jwt.Claims) (err e
 			return nil, errTokenExpired
 		}
 
-		return []byte(tu.conf.Jwt.SecretKey), nil
+		return []byte(tu.jwtConf.SecretKey), nil
 	})
 	if err != nil {
 		return err

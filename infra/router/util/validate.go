@@ -11,7 +11,7 @@ func ValidateBody[T any](c *gin.Context) (*T, error) {
 	var input T
 
 	if err := c.ShouldBind(&input); err != nil {
-		slog.Error(err.Error(), "error", err)
+		slog.Error(err.Error())
 		return nil, err
 	}
 
@@ -22,7 +22,7 @@ func ValidateQuery[T any](c *gin.Context) (*T, error) {
 	var input T
 
 	if err := c.ShouldBindQuery(&input); err != nil {
-		slog.Error(err.Error(), "error", err)
+		slog.Error(err.Error())
 		return nil, err
 	}
 
@@ -34,7 +34,7 @@ func ValidateInt64Param(c *gin.Context, key string) (*int64, error) {
 	id, err := strconv.ParseInt(param, 10, 64)
 
 	if err != nil {
-		slog.Error(err.Error(), "error", err)
+		slog.Error(err.Error())
 		return nil, err
 	}
 

@@ -10,10 +10,10 @@ import (
 )
 
 type ItemRepo struct {
-	db *database.Database
+	db database.Database
 }
 
-func NewItemRepo(db *database.Database) entity.ItemRepo {
+func NewItemRepo(db database.Database) entity.ItemRepo {
 	return &ItemRepo{
 		db: db,
 	}
