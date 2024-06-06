@@ -59,7 +59,7 @@ func (su SmtpUsecase) sendMail(data any, fileName, subject, email string) bool {
 		return false
 	}
 
-	addr := su.smtpConf.Host + strconv.Itoa(su.smtpConf.Port)
+	addr := su.smtpConf.Host + ":" + strconv.Itoa(su.smtpConf.Port)
 	auth := smtp.PlainAuth("", su.smtpConf.UserName, su.smtpConf.Password, su.smtpConf.Host)
 	from := su.smtpConf.UserName
 	to := []string{email}
