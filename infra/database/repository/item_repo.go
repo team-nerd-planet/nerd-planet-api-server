@@ -2,11 +2,13 @@ package repository
 
 import (
 	"fmt"
+	"log/slog"
 	"strconv"
 	"strings"
 
 	"github.com/team-nerd-planet/api-server/infra/database"
 	"github.com/team-nerd-planet/api-server/internal/entity"
+	"gorm.io/gorm"
 )
 
 type ItemRepo struct {
@@ -14,6 +16,43 @@ type ItemRepo struct {
 }
 
 func NewItemRepo(db database.Database) entity.ItemRepo {
+	if err := db.AutoMigrate(&entity.Item{}); err != nil {
+		slog.Error("Auto migrate Item Entity.")
+		panic(err)
+	}
+
+	db.Migrator().CreateView("vw_items", gorm.ViewOption{
+		Replace: true,
+		Query: db.
+			Table("items i").
+			Select(`
+				i."id" as item_id, 
+				i.title as item_title, 
+				i.description as item_description, 
+				i."link" as item_link,
+				i.thumbnail as item_thumbnail,
+				i.published as item_published,
+				i.view_count as item_view_count,
+				i.like_count as item_like_count,
+				f."id" as feed_id,
+				f."name" as feed_name, 
+				f.title as feed_title, 
+				f."link" as feed_link,
+				f.company_size as company_size, 
+				job_tags.id_arr as job_tags_id_arr,
+				skill_tags.id_arr as skill_tags_id_arr
+			`).
+			Joins(`LEFT JOIN feeds f ON f."id" = i.feed_id`).
+			Joins(`LEFT JOIN (?) as job_tags ON job_tags.item_id = i."id"`,
+				db.Table("item_job_tags").
+					Select("item_id, array_agg(job_tag_id) as id_arr").
+					Group("item_id")).
+			Joins(`LEFT JOIN (?) as skill_tags ON skill_tags.item_id = i."id"`,
+				db.Table("item_skill_tags").
+					Select("item_id, array_agg(skill_tag_id) as id_arr").
+					Group("item_id")).
+			Order(`i.published desc, i."id" desc`)})
+
 	return &ItemRepo{
 		db: db,
 	}

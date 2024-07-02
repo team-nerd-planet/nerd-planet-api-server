@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"log/slog"
+
 	"github.com/team-nerd-planet/api-server/infra/database"
 	"github.com/team-nerd-planet/api-server/internal/entity"
 )
@@ -10,6 +12,11 @@ type JobTagRepo struct {
 }
 
 func NewJobTagRepo(db database.Database) entity.JobTagRepo {
+	if err := db.AutoMigrate(&entity.JobTag{}); err != nil {
+		slog.Error("Auto migrate JobTag Entity.")
+		panic(err)
+	}
+	
 	return &JobTagRepo{
 		db: db,
 	}

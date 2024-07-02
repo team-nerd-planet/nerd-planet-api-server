@@ -15,6 +15,8 @@ type Item struct {
 	Published   time.Time  `gorm:"column:published;type:timestamp;not null"`
 	GUID        string     `gorm:"column:guid;type:varchar;not null"`
 	FeedID      uint       `gorm:"column:feed_id;type:int8;not null"`
+	ViewCount   uint       `gorm:"column:view_count;type:int8;not null;default:0"`
+	LikeCount   uint       `gorm:"column:like_count;type:int8;not null;default:0"`
 	JobTags     []JobTag   `gorm:"many2many:item_job_tags;"`
 	SkillTags   []SkillTag `gorm:"many2many:item_skill_tags;"`
 }
@@ -26,6 +28,8 @@ type ItemView struct {
 	ItemLink        string          `gorm:"column:item_link;type:varchar"`
 	ItemThumbnail   *string         `gorm:"column:item_thumbnail;type:varchar"`
 	ItemPublished   time.Time       `gorm:"column:item_published;type:timestamp"`
+	ItemViewCount   uint            `gorm:"column:item_view_count;type:int8"`
+	ItemLikeCount   uint            `gorm:"column:item_like_count;type:int8"`
 	FeedName        string          `gorm:"column:feed_name;type:varchar"`
 	FeedTitle       string          `gorm:"column:feed_title;type:varchar"`
 	FeedLink        string          `gorm:"column:feed_link;type:varchar"`

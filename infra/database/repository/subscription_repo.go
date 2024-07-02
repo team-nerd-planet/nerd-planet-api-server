@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"log/slog"
 
 	"github.com/team-nerd-planet/api-server/infra/database"
 	"github.com/team-nerd-planet/api-server/internal/entity"
@@ -13,7 +14,10 @@ type SubscriptionRepo struct {
 }
 
 func NewSubscriptionRepo(db database.Database) entity.SubscriptionRepo {
-	db.AutoMigrate(&entity.Subscription{})
+	if err := db.AutoMigrate(&entity.Subscription{}); err != nil {
+		slog.Error("Auto migrate Subscription Entity.")
+		panic(err)
+	}
 
 	return &SubscriptionRepo{
 		db: db,
