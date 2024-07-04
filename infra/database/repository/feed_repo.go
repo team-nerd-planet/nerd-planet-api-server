@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/team-nerd-planet/api-server/infra/database"
@@ -13,6 +14,11 @@ type FeedRepo struct {
 }
 
 func NewFeedRepo(db database.Database) entity.FeedRepo {
+	if err := db.AutoMigrate(&entity.Feed{}); err != nil {
+		slog.Error("Auto migrate Feed Entity.")
+		panic(err)
+	}
+
 	return &FeedRepo{
 		db: db,
 	}
