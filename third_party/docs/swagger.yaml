@@ -357,7 +357,7 @@ paths:
       summary: List item
       tags:
       - item
-  /v1/item/like_increase:
+  /v1/item/increase_like:
     post:
       consumes:
       - application/json
@@ -385,6 +385,36 @@ paths:
           schema:
             $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
       summary: Increase Like Count
+      tags:
+      - item
+  /v1/item/increase_view:
+    post:
+      consumes:
+      - application/json
+      description: increase item's view count
+      parameters:
+      - description: 조회 수 증가 요청 내용
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+      summary: Increase View Count
       tags:
       - item
   /v1/item/next:
@@ -423,36 +453,6 @@ paths:
           schema:
             $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
       summary: Find Next Items
-      tags:
-      - item
-  /v1/item/view_increase:
-    post:
-      consumes:
-      - application/json
-      description: increase item's view count
-      parameters:
-      - description: 조회 수 증가 요청 내용
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountRes'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
-      summary: Increase View Count
       tags:
       - item
   /v1/subscription/apply:

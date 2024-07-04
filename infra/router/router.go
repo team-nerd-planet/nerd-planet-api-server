@@ -52,8 +52,8 @@ func NewRouter(
 		{
 			item.Get("/", func(ctx iris.Context) { handler.ListItems(ctx, itemCtrl) })
 			item.Get("/next", func(ctx iris.Context) { handler.FindNextItems(ctx, itemCtrl) })
-			item.Post("/view_increase", func(ctx iris.Context) { handler.IncreaseViewCount(ctx, itemCtrl) })
-			item.Post("/like_increase", func(ctx iris.Context) { handler.IncreaseLikeCount(ctx, itemCtrl) })
+			item.Post("/increase_view", func(ctx iris.Context) { handler.IncreaseViewCount(ctx, itemCtrl) })
+			item.Post("/increase_like", func(ctx iris.Context) { handler.IncreaseLikeCount(ctx, itemCtrl) })
 		}
 
 		tag := v1.Party("/tag")

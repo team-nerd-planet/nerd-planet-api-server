@@ -148,7 +148,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/item/like_increase": {
+        "/v1/item/increase_like": {
             "post": {
                 "description": "increase item's like count",
                 "consumes": [
@@ -177,6 +177,52 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseLikeCountRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/item/increase_view": {
+            "post": {
+                "description": "increase item's view count",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "item"
+                ],
+                "summary": "Increase View Count",
+                "parameters": [
+                    {
+                        "description": "조회 수 증가 요청 내용",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountRes"
                         }
                     },
                     "400": {
@@ -234,52 +280,6 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindNextRes"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/item/view_increase": {
-            "post": {
-                "description": "increase item's view count",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "item"
-                ],
-                "summary": "Increase View Count",
-                "parameters": [
-                    {
-                        "description": "조회 수 증가 요청 내용",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountRes"
                         }
                     },
                     "400": {

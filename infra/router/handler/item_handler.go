@@ -56,7 +56,7 @@ func ListItems(c iris.Context, ctrl rest.ItemController) {
 // @Success			200 {object} item_dto.IncreaseViewCountRes
 // @Failure			400 {object} util.HTTPError
 // @Failure			500 {object} util.HTTPError
-// @Router			/v1/item/view_increase [post]
+// @Router			/v1/item/increase_view [post]
 func IncreaseViewCount(c iris.Context, ctrl rest.ItemController) {
 	req, err := util.ValidateBody[item_dto.IncreaseViewCountReq](c)
 	if err != nil {
@@ -85,7 +85,7 @@ func IncreaseViewCount(c iris.Context, ctrl rest.ItemController) {
 // @Success			200 {object} item_dto.IncreaseLikeCountRes
 // @Failure			400 {object} util.HTTPError
 // @Failure			500 {object} util.HTTPError
-// @Router			/v1/item/like_increase [post]
+// @Router			/v1/item/increase_like [post]
 func IncreaseLikeCount(c iris.Context, ctrl rest.ItemController) {
 	req, err := util.ValidateBody[item_dto.IncreaseLikeCountReq](c)
 	if err != nil {
