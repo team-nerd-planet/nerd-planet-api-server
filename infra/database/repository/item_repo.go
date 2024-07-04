@@ -67,7 +67,7 @@ func (clr *ItemRepo) FindAllView(company *string, companySizes *[]entity.Company
 
 	if company != nil {
 		where = append(where, "feed_name LIKE ?")
-		param = append(param, fmt.Sprintf("%%%s%%", *company))
+		param = append(param, fmt.Sprintf("%s%%", *company))
 	}
 
 	if companySizes != nil && len(*companySizes) > 0 {
