@@ -2,41 +2,57 @@ package util
 
 import (
 	"log/slog"
-	"strconv"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"github.com/kataras/iris/v12"
 )
 
-func ValidateBody[T any](c *gin.Context) (*T, error) {
+var validate *validator.Validate
+
+func ValidateBody[T any](c iris.Context) (*T, error) {
 	var input T
 
-	if err := c.ShouldBind(&input); err != nil {
+	if err := c.ReadJSON(&input); err != nil {
 		slog.Error(err.Error())
+		return nil, err
+	}
+
+	validate = validator.New()
+	if err := validate.Struct(input); err != nil {
 		return nil, err
 	}
 
 	return &input, nil
 }
 
-func ValidateQuery[T any](c *gin.Context) (*T, error) {
+func ValidateQuery[T any](c iris.Context) (*T, error) {
 	var input T
 
-	if err := c.ShouldBindQuery(&input); err != nil {
+	if err := c.ReadQuery(&input); err != nil {
 		slog.Error(err.Error())
+		return nil, err
+	}
+
+	validate = validator.New()
+	if err := validate.Struct(input); err != nil {
 		return nil, err
 	}
 
 	return &input, nil
 }
 
-func ValidateInt64Param(c *gin.Context, key string) (*int64, error) {
-	param := c.Param(key)
-	id, err := strconv.ParseInt(param, 10, 64)
+func ValidateForm[T any](c iris.Context) (*T, error) {
+	var input T
 
-	if err != nil {
+	if err := c.ReadForm(&input); err != nil {
 		slog.Error(err.Error())
 		return nil, err
 	}
 
-	return &id, nil
+	validate = validator.New()
+	if err := validate.Struct(input); err != nil {
+		return nil, err
+	}
+
+	return &input, nil
 }

@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/kataras/iris/v12"
 	"github.com/team-nerd-planet/api-server/infra/router/util"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest/dto/subscription_dto"
@@ -22,7 +22,7 @@ import (
 // @Failure			400 {object} util.HTTPError
 // @Failure			500 {object} util.HTTPError
 // @Router			/v1/subscription/apply [post]
-func Apply(c *gin.Context, ctrl rest.SubscriptionController) {
+func Apply(c iris.Context, ctrl rest.SubscriptionController) {
 	req, err := util.ValidateBody[subscription_dto.ApplyReq](c)
 	if err != nil {
 		util.NewError(c, http.StatusBadRequest, err)
@@ -35,27 +35,7 @@ func Apply(c *gin.Context, ctrl rest.SubscriptionController) {
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
-}
-
-func ApproveGet(c *gin.Context, ctrl rest.SubscriptionController) {
-	req, err := util.ValidateQuery[subscription_dto.ApproveReq](c)
-	if err != nil {
-		c.Redirect(http.StatusBadRequest, "https://www.nerdplanet.app")
-		return
-	}
-
-	res, ok := ctrl.Approve(*req)
-	if !ok {
-		c.Redirect(http.StatusInternalServerError, "https://www.nerdplanet.app")
-		return
-	}
-
-	if res.Ok {
-		c.Redirect(http.StatusFound, "https://www.nerdplanet.app")
-	} else {
-		c.Redirect(http.StatusBadRequest, "https://www.nerdplanet.app")
-	}
+	c.JSON(res)
 }
 
 // Approve
@@ -71,7 +51,7 @@ func ApproveGet(c *gin.Context, ctrl rest.SubscriptionController) {
 // @Failure			400 {object} util.HTTPError
 // @Failure			500 {object} util.HTTPError
 // @Router			/v1/subscription/approve [post]
-func Approve(c *gin.Context, ctrl rest.SubscriptionController) {
+func Approve(c iris.Context, ctrl rest.SubscriptionController) {
 	req, err := util.ValidateBody[subscription_dto.ApproveReq](c)
 	if err != nil {
 		util.NewError(c, http.StatusBadRequest, err)
@@ -84,5 +64,5 @@ func Approve(c *gin.Context, ctrl rest.SubscriptionController) {
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(res)
 }

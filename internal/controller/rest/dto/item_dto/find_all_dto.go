@@ -7,11 +7,11 @@ import (
 )
 
 type FindAllItemReq struct {
-	Company     *string                   `form:"company" binding:"omitempty,min=1"`            // 회사 이름 검색 키워드
-	CompanySize *[]entity.CompanySizeType `form:"company_size" binding:"omitempty"` 			// 회사 규모 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)
-	JobTags     *[]int64                  `form:"job_tags" binding:"omitempty"`                 // 관련 직무 DB ID 배열
-	SkillTags   *[]int64                  `form:"skill_tags" binding:"omitempty"`               // 관련 스킬 DB ID 배열
-	Page        *int                      `form:"page" binding:"required,gte=1"`                // 페이지
+	Company     *string                   `url:"company" validate:"omitempty,min=1"`                 // 회사 이름 검색 키워드
+	CompanySize *[]entity.CompanySizeType `url:"company_size" validate:"omitempty,dive,gte=0,lte=4"` // 회사 규모 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)
+	JobTags     *[]int64                  `url:"job_tags" validate:"omitempty,dive,gte=1"`           // 관련 직무 DB ID 배열
+	SkillTags   *[]int64                  `url:"skill_tags" validate:"omitempty,dive,gte=1"`         // 관련 스킬 DB ID 배열
+	Page        *int                      `url:"page" validate:"required,gte=1"`                     // 페이지
 }
 
 type FindAllItemRes struct {

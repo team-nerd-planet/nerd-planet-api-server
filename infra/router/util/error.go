@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
+	"github.com/kataras/iris/v12"
 )
 
-func NewError(ctx *gin.Context, status int, errors ...any) {
+func NewError(ctx iris.Context, status int, errors ...any) {
 	description := make([]string, 0)
 
 	for _, err := range errors {
@@ -19,7 +19,7 @@ func NewError(ctx *gin.Context, status int, errors ...any) {
 		}
 	}
 
-	ctx.AbortWithStatusJSON(status, HTTPError{
+	ctx.StopWithJSON(status, HTTPError{
 		Code:        status,
 		Message:     http.StatusText(status),
 		Description: strings.Join(description, ", "),

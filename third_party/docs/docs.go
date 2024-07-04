@@ -93,7 +93,7 @@ const docTemplate = `{
                             ],
                             "type": "integer"
                         },
-                        "collectionFormat": "multi",
+                        "collectionFormat": "csv",
                         "description": "회사 규모 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)",
                         "name": "company_size",
                         "in": "query"
@@ -103,7 +103,7 @@ const docTemplate = `{
                         "items": {
                             "type": "integer"
                         },
-                        "collectionFormat": "multi",
+                        "collectionFormat": "csv",
                         "description": "관련 직무 DB ID 배열",
                         "name": "job_tags",
                         "in": "query"
@@ -113,7 +113,7 @@ const docTemplate = `{
                         "items": {
                             "type": "integer"
                         },
-                        "collectionFormat": "multi",
+                        "collectionFormat": "csv",
                         "description": "관련 스킬 DB ID 배열",
                         "name": "skill_tags",
                         "in": "query"
@@ -131,6 +131,155 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto.Paginated-array_github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto_FindAllItemRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/item/like_increase": {
+            "post": {
+                "description": "increase item's like count",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "item"
+                ],
+                "summary": "Increase Like Count",
+                "parameters": [
+                    {
+                        "description": "좋아요 수 증가 요청 내용",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseLikeCountReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseLikeCountRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/item/next": {
+            "get": {
+                "description": "find next items",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "item"
+                ],
+                "summary": "Find Next Items",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "제외할 글 ID 목록",
+                        "name": "excluded_ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "글 목록 개수 제한",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindNextRes"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/item/view_increase": {
+            "post": {
+                "description": "increase item's view count",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "item"
+                ],
+                "summary": "Increase View Count",
+                "parameters": [
+                    {
+                        "description": "조회 수 증가 요청 내용",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountRes"
                         }
                     },
                     "400": {
@@ -371,9 +520,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
+                    "description": "검색된 회사 ID",
                     "type": "integer"
                 },
                 "name": {
+                    "description": "검색된 회사 이름",
                     "type": "string"
                 }
             }
@@ -409,12 +560,20 @@ const docTemplate = `{
                     "description": "글 DB ID",
                     "type": "integer"
                 },
+                "item_likes": {
+                    "description": "좋아요 수",
+                    "type": "integer"
+                },
                 "item_link": {
                     "description": "글 URL",
                     "type": "string"
                 },
                 "item_published": {
-                    "description": "개시 시간",
+                    "description": "글 개시 시간",
+                    "type": "string"
+                },
+                "item_summary": {
+                    "description": "글 요약 내용",
                     "type": "string"
                 },
                 "item_thumbnail": {
@@ -424,6 +583,10 @@ const docTemplate = `{
                 "item_title": {
                     "description": "글 제목",
                     "type": "string"
+                },
+                "item_views": {
+                    "description": "조회 수",
+                    "type": "integer"
                 },
                 "job_tags_id_arr": {
                     "description": "관련 직무 DB ID 배열",
@@ -438,6 +601,123 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindNextRes": {
+            "type": "object",
+            "properties": {
+                "company_size": {
+                    "description": "회사 규모",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_team-nerd-planet_api-server_internal_entity.CompanySizeType"
+                        }
+                    ]
+                },
+                "feed_link": {
+                    "description": "회사 URL",
+                    "type": "string"
+                },
+                "feed_name": {
+                    "description": "회사 이름",
+                    "type": "string"
+                },
+                "feed_title": {
+                    "description": "회사 Feed 제목",
+                    "type": "string"
+                },
+                "item_description": {
+                    "description": "글 설명",
+                    "type": "string"
+                },
+                "item_id": {
+                    "description": "글 DB ID",
+                    "type": "integer"
+                },
+                "item_likes": {
+                    "description": "좋아요 수",
+                    "type": "integer"
+                },
+                "item_link": {
+                    "description": "글 URL",
+                    "type": "string"
+                },
+                "item_published": {
+                    "description": "글 개시 시간",
+                    "type": "string"
+                },
+                "item_summary": {
+                    "description": "글 요약 내용",
+                    "type": "string"
+                },
+                "item_thumbnail": {
+                    "description": "글 썸네일",
+                    "type": "string"
+                },
+                "item_title": {
+                    "description": "글 제목",
+                    "type": "string"
+                },
+                "item_views": {
+                    "description": "조회 수",
+                    "type": "integer"
+                },
+                "job_tags_id_arr": {
+                    "description": "관련 직무 DB ID 배열",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "skill_tags_id_arr": {
+                    "description": "관련 스킬 DB ID 배열",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseLikeCountReq": {
+            "type": "object",
+            "required": [
+                "item_id"
+            ],
+            "properties": {
+                "item_id": {
+                    "description": "좋아요 수를 증가시킬 글의 ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseLikeCountRes": {
+            "type": "object",
+            "properties": {
+                "item_like_count": {
+                    "description": "증가된 글의 종아요 수",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountReq": {
+            "type": "object",
+            "required": [
+                "item_id"
+            ],
+            "properties": {
+                "item_id": {
+                    "description": "조회 수를 증가시킬 글의 ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountRes": {
+            "type": "object",
+            "properties": {
+                "item_view_count": {
+                    "description": "증가된 글의 조회 수",
+                    "type": "integer"
                 }
             }
         },

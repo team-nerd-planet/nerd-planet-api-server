@@ -26,8 +26,10 @@ definitions:
   github_com_team-nerd-planet_api-server_internal_controller_rest_dto_feed_dto.SearchRes:
     properties:
       id:
+        description: 검색된 회사 ID
         type: integer
       name:
+        description: 검색된 회사 이름
         type: string
     type: object
   github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindAllItemRes:
@@ -51,11 +53,17 @@ definitions:
       item_id:
         description: 글 DB ID
         type: integer
+      item_likes:
+        description: 좋아요 수
+        type: integer
       item_link:
         description: 글 URL
         type: string
       item_published:
-        description: 개시 시간
+        description: 글 개시 시간
+        type: string
+      item_summary:
+        description: 글 요약 내용
         type: string
       item_thumbnail:
         description: 글 썸네일
@@ -63,6 +71,9 @@ definitions:
       item_title:
         description: 글 제목
         type: string
+      item_views:
+        description: 조회 수
+        type: integer
       job_tags_id_arr:
         description: 관련 직무 DB ID 배열
         items:
@@ -73,6 +84,87 @@ definitions:
         items:
           type: integer
         type: array
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindNextRes:
+    properties:
+      company_size:
+        allOf:
+        - $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_entity.CompanySizeType'
+        description: 회사 규모
+      feed_link:
+        description: 회사 URL
+        type: string
+      feed_name:
+        description: 회사 이름
+        type: string
+      feed_title:
+        description: 회사 Feed 제목
+        type: string
+      item_description:
+        description: 글 설명
+        type: string
+      item_id:
+        description: 글 DB ID
+        type: integer
+      item_likes:
+        description: 좋아요 수
+        type: integer
+      item_link:
+        description: 글 URL
+        type: string
+      item_published:
+        description: 글 개시 시간
+        type: string
+      item_summary:
+        description: 글 요약 내용
+        type: string
+      item_thumbnail:
+        description: 글 썸네일
+        type: string
+      item_title:
+        description: 글 제목
+        type: string
+      item_views:
+        description: 조회 수
+        type: integer
+      job_tags_id_arr:
+        description: 관련 직무 DB ID 배열
+        items:
+          type: integer
+        type: array
+      skill_tags_id_arr:
+        description: 관련 스킬 DB ID 배열
+        items:
+          type: integer
+        type: array
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseLikeCountReq:
+    properties:
+      item_id:
+        description: 좋아요 수를 증가시킬 글의 ID
+        type: integer
+    required:
+    - item_id
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseLikeCountRes:
+    properties:
+      item_like_count:
+        description: 증가된 글의 종아요 수
+        type: integer
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountReq:
+    properties:
+      item_id:
+        description: 조회 수를 증가시킬 글의 ID
+        type: integer
+    required:
+    - item_id
+    type: object
+  github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountRes:
+    properties:
+      item_view_count:
+        description: 증가된 글의 조회 수
+        type: integer
     type: object
   github_com_team-nerd-planet_api-server_internal_controller_rest_dto_subscription_dto.ApplyReq:
     properties:
@@ -215,7 +307,7 @@ paths:
         in: query
         name: company
         type: string
-      - collectionFormat: multi
+      - collectionFormat: csv
         description: 회사 규모 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)
         in: query
         items:
@@ -228,14 +320,14 @@ paths:
           type: integer
         name: company_size
         type: array
-      - collectionFormat: multi
+      - collectionFormat: csv
         description: 관련 직무 DB ID 배열
         in: query
         items:
           type: integer
         name: job_tags
         type: array
-      - collectionFormat: multi
+      - collectionFormat: csv
         description: 관련 스킬 DB ID 배열
         in: query
         items:
@@ -263,6 +355,104 @@ paths:
           schema:
             $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
       summary: List item
+      tags:
+      - item
+  /v1/item/like_increase:
+    post:
+      consumes:
+      - application/json
+      description: increase item's like count
+      parameters:
+      - description: 좋아요 수 증가 요청 내용
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseLikeCountReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseLikeCountRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+      summary: Increase Like Count
+      tags:
+      - item
+  /v1/item/next:
+    get:
+      consumes:
+      - application/json
+      description: find next items
+      parameters:
+      - collectionFormat: csv
+        description: 제외할 글 ID 목록
+        in: query
+        items:
+          type: integer
+        name: excluded_ids
+        type: array
+      - description: 글 목록 개수 제한
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.FindNextRes'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+      summary: Find Next Items
+      tags:
+      - item
+  /v1/item/view_increase:
+    post:
+      consumes:
+      - application/json
+      description: increase item's view count
+      parameters:
+      - description: 조회 수 증가 요청 내용
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_internal_controller_rest_dto_item_dto.IncreaseViewCountRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_team-nerd-planet_api-server_infra_router_util.HTTPError'
+      summary: Increase View Count
       tags:
       - item
   /v1/subscription/apply:

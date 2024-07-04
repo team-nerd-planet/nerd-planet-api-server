@@ -1,7 +1,7 @@
 package subscription_dto
 
 type ApproveReq struct {
-	Token string `form:"token" json:"token" binding:"required"`
+	Token string `form:"token" json:"token" validate:"required"`
 }
 
 type ApproveRes struct {

@@ -2,24 +2,23 @@ package router
 
 import (
 	"fmt"
-	"time"
 
-	"github.com/gin-contrib/cache"
-	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/kataras/iris/v12"
 	"github.com/team-nerd-planet/api-server/infra/config"
 	"github.com/team-nerd-planet/api-server/infra/router/handler"
 	"github.com/team-nerd-planet/api-server/infra/router/middleware"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
-	docs "github.com/team-nerd-planet/api-server/third_party/docs"
+
+	"github.com/iris-contrib/swagger"              // swagger middleware for Iris
+	"github.com/iris-contrib/swagger/swaggerFiles" // swagger embed files
+
+	"github.com/team-nerd-planet/api-server/third_party/docs"
 )
 
 type Router struct {
-	router *gin.Engine
-	store  *persistence.InMemoryStore
-	conf   config.Config
+	app  *iris.Application
+	conf config.Config
 }
 
 func NewRouter(
@@ -33,47 +32,54 @@ func NewRouter(
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	r := gin.Default()
-	r.Use(middleware.CorsHandler())
-	s := persistence.NewInMemoryStore(time.Hour)
+	app := iris.Default()
+	app.UseRouter(middleware.CorsHandler())
 
 	docs.SwaggerInfo.Host = conf.Swagger.Host
 	docs.SwaggerInfo.BasePath = conf.Swagger.BasePath
-	v1 := r.Group("/v1")
+
+	swaggerUI := swagger.Handler(swaggerFiles.Handler,
+		swagger.URL("/v1/docs/swagger.json"),
+		swagger.DeepLinking(true),
+		swagger.Prefix("/v1/docs"),
+	)
+	v1 := app.Party("/v1")
 	{
-		v1.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+		v1.Get("/docs", swaggerUI)
+		v1.Get("/docs/{any:path}", swaggerUI)
 
-		item := v1.Group("/item")
+		item := v1.Party("/item")
 		{
-			item.GET("/", cache.CachePage(s, time.Hour, func(ctx *gin.Context) { handler.ListItems(ctx, itemCtrl) }))
+			item.Get("/", func(ctx iris.Context) { handler.ListItems(ctx, itemCtrl) })
+			item.Get("/next", func(ctx iris.Context) { handler.FindNextItems(ctx, itemCtrl) })
+			item.Post("/view_increase", func(ctx iris.Context) { handler.IncreaseViewCount(ctx, itemCtrl) })
+			item.Post("/like_increase", func(ctx iris.Context) { handler.IncreaseLikeCount(ctx, itemCtrl) })
 		}
 
-		tag := v1.Group("/tag")
+		tag := v1.Party("/tag")
 		{
-			tag.GET("/job", cache.CachePage(s, time.Hour, func(ctx *gin.Context) { handler.ListJobTags(ctx, tagCtrl) }))
-			tag.GET("/skill", cache.CachePage(s, time.Hour, func(ctx *gin.Context) { handler.ListSkillTags(ctx, tagCtrl) }))
+			tag.Get("/job", func(ctx iris.Context) { handler.ListJobTags(ctx, tagCtrl) })
+			tag.Get("/skill", func(ctx iris.Context) { handler.ListSkillTags(ctx, tagCtrl) })
 		}
 
-		subscription := v1.Group("/subscription")
+		subscription := v1.Party("/subscription")
 		{
-			subscription.POST("/apply", func(ctx *gin.Context) { handler.Apply(ctx, subscriptionCtrl) })
-			subscription.GET("/approve", func(ctx *gin.Context) { handler.ApproveGet(ctx, subscriptionCtrl) })
-			subscription.POST("/approve", func(ctx *gin.Context) { handler.Approve(ctx, subscriptionCtrl) })
+			subscription.Post("/apply", func(ctx iris.Context) { handler.Apply(ctx, subscriptionCtrl) })
+			subscription.Post("/approve", func(ctx iris.Context) { handler.Approve(ctx, subscriptionCtrl) })
 		}
 
-		feed := v1.Group("/feed")
+		feed := v1.Party("/feed")
 		{
-			feed.GET("/search", func(ctx *gin.Context) { handler.SearchFeedName(ctx, feedCtrl) })
+			feed.Get("/search", func(ctx iris.Context) { handler.SearchFeedName(ctx, feedCtrl) })
 		}
 	}
 
 	return Router{
-		router: r,
-		store:  s,
-		conf:   conf,
+		app:  app,
+		conf: conf,
 	}
 }
 
 func (r Router) Run() error {
-	return r.router.Run(fmt.Sprintf(":%d", r.conf.Rest.Port))
+	return r.app.Listen(fmt.Sprintf(":%d", r.conf.Rest.Port))
 }

@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/kataras/iris/v12"
 	"github.com/team-nerd-planet/api-server/infra/router/util"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest"
 	"github.com/team-nerd-planet/api-server/internal/controller/rest/dto/feed_dto"
@@ -22,7 +22,7 @@ import (
 // @Failure			400 {object} util.HTTPError
 // @Failure			500 {object} util.HTTPError
 // @Router			/v1/feed/search [get]
-func SearchFeedName(c *gin.Context, ctrl rest.FeedController) {
+func SearchFeedName(c iris.Context, ctrl rest.FeedController) {
 	req, err := util.ValidateQuery[feed_dto.SearchReq](c)
 	if err != nil {
 		util.NewError(c, http.StatusBadRequest, err)
@@ -35,5 +35,5 @@ func SearchFeedName(c *gin.Context, ctrl rest.FeedController) {
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(res)
 }

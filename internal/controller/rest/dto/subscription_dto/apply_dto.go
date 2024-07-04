@@ -3,13 +3,13 @@ package subscription_dto
 import "github.com/team-nerd-planet/api-server/internal/entity"
 
 type ApplyReq struct {
-	Email                   string                   `json:"email" binding:"required,email"`               // 이메일
-	Name                    *string                  `json:"name" binding:"omitempty"`                     // 이름
-	Division                *string                  `json:"division" binding:"omitempty"`                 // 소속
-	PreferredCompanyArr     []int64                  `json:"preferred_company_arr" binding:"required"`     // 회사 DB ID 배열
-	PreferredCompanySizeArr []entity.CompanySizeType `json:"preferred_companySize_arr" binding:"required"` // 회사 규모 배열 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)
-	PreferredJobArr         []int64                  `json:"preferred_job_arr" binding:"required"`         // 직무 DB ID 배열
-	PreferredSkillArr       []int64                  `json:"preferred_skill_arr" binding:"required"`       // 스킬 DB ID 배열
+	Email                   string                   `json:"email" validate:"required,email"`                                // 이메일
+	Name                    *string                  `json:"name"`                                                           // 이름
+	Division                *string                  `json:"division"`                                                       // 소속
+	PreferredCompanyArr     []int64                  `json:"preferred_company_arr" validate:"required"`                      // 회사 DB ID 배열
+	PreferredCompanySizeArr []entity.CompanySizeType `json:"preferred_companySize_arr" validate:"required,dive,gte=0,lte=4"` // 회사 규모 배열 (0:스타트업, 1:중소기업, 2:중견기업, 3:대기업, 4:외국계)
+	PreferredJobArr         []int64                  `json:"preferred_job_arr" validate:"required"`                          // 직무 DB ID 배열
+	PreferredSkillArr       []int64                  `json:"preferred_skill_arr" validate:"required"`                        // 스킬 DB ID 배열
 }
 
 type ApplyRes struct {
