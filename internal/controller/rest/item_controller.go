@@ -38,3 +38,34 @@ func (ic ItemController) FindAllItem(req item_dto.FindAllItemReq) (dto.Paginated
 	data = dto.NewPaginatedRes(itemRes, *req.Page, perPage, *totalCount)
 	return data, true
 }
+
+func (ic ItemController) IncreaseViewCount(req item_dto.IncreaseViewCountReq) (*item_dto.IncreaseViewCountRes, bool) {
+	count, ok := ic.itemUcase.IncreaseViewCount(req.Id)
+	if !ok {
+		return nil, false
+	}
+
+	return &item_dto.IncreaseViewCountRes{
+		ItemViewCount: count,
+	}, true
+}
+
+func (ic ItemController) IncreaseLikeCount(req item_dto.IncreaseLikeCountReq) (*item_dto.IncreaseLikeCountRes, bool) {
+	count, ok := ic.itemUcase.IncreaseLikeCount(req.Id)
+	if !ok {
+		return nil, false
+	}
+
+	return &item_dto.IncreaseLikeCountRes{
+		ItemLikeCount: count,
+	}, true
+}
+
+func (ic ItemController) FindNextItems(req item_dto.FindNextReq) ([]item_dto.FindNextRes, bool) {
+	items, ok := ic.itemUcase.FindNextViewItem(req.ExcludedIds, req.Limit)
+	if !ok {
+		return []item_dto.FindNextRes{}, false
+	}
+
+	return item_dto.NewFindNextRes(*items), true
+}

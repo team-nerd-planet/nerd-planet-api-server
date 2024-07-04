@@ -20,7 +20,10 @@ type FindAllItemRes struct {
 	ItemDescription string                 `json:"item_description"`  // 글 설명
 	ItemLink        string                 `json:"item_link"`         // 글 URL
 	ItemThumbnail   *string                `json:"item_thumbnail"`    // 글 썸네일
-	ItemPublished   time.Time              `json:"item_published"`    // 개시 시간
+	ItemPublished   time.Time              `json:"item_published"`    // 글 개시 시간
+	ItemSummary     *string                `json:"item_summary"`      // 글 요약 내용
+	ItemViews       uint                   `json:"item_views"`        // 조회 수
+	ItemLikes       uint                   `json:"item_likes"`        // 좋아요 수
 	FeedName        string                 `json:"feed_name"`         // 회사 이름
 	FeedTitle       string                 `json:"feed_title"`        // 회사 Feed 제목
 	FeedLink        string                 `json:"feed_link"`         // 회사 URL
@@ -37,6 +40,9 @@ func NewFindAllItemRes(itemView entity.ItemView) FindAllItemRes {
 		ItemLink:        itemView.ItemLink,
 		ItemThumbnail:   itemView.ItemThumbnail,
 		ItemPublished:   itemView.ItemPublished,
+		ItemSummary:     itemView.ItemSummary,
+		ItemViews:       itemView.ItemViews,
+		ItemLikes:       itemView.ItemLikes,
 		FeedName:        itemView.FeedName,
 		FeedTitle:       itemView.FeedTitle,
 		FeedLink:        itemView.FeedLink,

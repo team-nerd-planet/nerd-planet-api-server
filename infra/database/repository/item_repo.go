@@ -135,6 +135,104 @@ func (ir *ItemRepo) FindAllView(company *string, companySizes *[]entity.CompanyS
 	return items, err
 }
 
+// Update implements entity.ItemRepo.
+func (ir *ItemRepo) Update(id int64, newItem entity.Item) (entity.Item, error) {
+	var (
+		item entity.Item
+	)
+
+	err := ir.db.First(&item, id).Error
+	if err != nil {
+		return entity.Item{}, err
+	}
+
+	item = newItem
+	item.ID = uint(id)
+	err = ir.db.Save(&item).Error
+	if err != nil {
+		return entity.Item{}, err
+	}
+
+	return item, nil
+}
+
+// Exist implements entity.ItemRepo.
+func (ir *ItemRepo) Exist(id int64) (bool, error) {
+	err := ir.db.Select("id").Take(&entity.Item{}, id).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, nil
+	} else if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// IncreaseViewCount implements entity.ItemRepo.
+func (ir *ItemRepo) IncreaseViewCount(id int64) (int64, error) {
+	var (
+		item entity.Item
+	)
+
+	if err := ir.db.Select("id", "views").Take(&item, id).Error; err != nil {
+		return -1, err
+	}
+
+	result := ir.db.Model(&item).Updates(entity.Item{Views: item.Views + 1})
+	if result.Error != nil {
+		return -1, result.Error
+	}
+
+	if result.RowsAffected < 1 {
+		return -1, errors.New("0 Row Affected")
+	}
+
+	return int64(item.Views), nil
+}
+
+// IncreaseLikeCount implements entity.ItemRepo.
+func (ir *ItemRepo) IncreaseLikeCount(id int64) (int64, error) {
+	var (
+		item entity.Item
+	)
+
+	if err := ir.db.Select("id", "likes").Take(&item, id).Error; err != nil {
+		return -1, err
+	}
+
+	result := ir.db.Model(&item).Updates(entity.Item{Likes: item.Likes + 1})
+	if result.Error != nil {
+		return -1, result.Error
+	}
+
+	if result.RowsAffected < 1 {
+		return -1, errors.New("0 Row Affected")
+	}
+
+	return int64(item.Likes), nil
+}
+
+// FindAllViewByExcludedIds implements entity.ItemRepo.
+func (ir *ItemRepo) FindAllViewByExcludedIds(ids []int64, perPage int32) ([]entity.ItemView, error) {
+	var (
+		items []entity.ItemView
+		where = make([]string, 0)
+		param = make([]interface{}, 0)
+	)
+
+	if len(ids) > 0 {
+		where = append(where, "item_id NOT IN ?")
+		param = append(param, ids)
+	}
+
+	err := ir.db.
+		Where(strings.Join(where, " AND "), param...).
+		Limit(int(perPage)).
+		Find(&items).Error
+
+	return items, err
+}
+
 func getArrToString(arr []int64) string {
 	strArr := make([]string, len(arr))
 	for i, v := range arr {
